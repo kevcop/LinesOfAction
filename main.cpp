@@ -8,10 +8,13 @@ using namespace std;
 
 int main() {
     Board gameBoard; // create board object
-
+    
     cout << "INITIAL BOARD\n";
     gameBoard.showBoard();
-
+    Player p1_name;
+    Player p2_name;
+    //cout << "Player 1: " << p1_name.getName() << endl;
+    //Player p1(p1_name);
     return 0;
 }
 
