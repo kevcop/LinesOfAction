@@ -19,7 +19,7 @@ void Board::createBoard() {
             else {
                 board[i][j] = '.'; // Use 'S' to represent empty spaces
             }
-        }
+        }//
     }
     //for (int i = 0; i < ROWS; i++)
     //{
