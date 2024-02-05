@@ -12,6 +12,8 @@ private:
 public:
 	int age;
 	Player();
+	explicit Player(const string& name);
+	void setPlayerName(const string& name);
 	void askPlayer();
 	string getName() const;
 	bool operator==(const Player& test) const {

@@ -12,9 +12,17 @@ int main() {
     
     cout << "INITIAL BOARD\n";
     gameBoard.showBoard();
-    Player p1_name;
-    Player p2_name;
-    Game startGame(p1_name, p2_name);
+    string p1_name, p2_name;
+    cout << "Enter player 1 name: \n";
+    cin >> p1_name;
+    cout << "Enter player 2 name: \n";
+    cin >> p2_name;
+    Game startGame;
+    startGame.setPlayerNames(p1_name, p2_name);
+    startGame.coinToss();
+    //Player p1_name;
+    //Player p2_name;
+    //Game startGame(p1_name, p2_name);
 
     //cout << "Player 1: " << p1_name.getName() << endl;
     //Player p1(p1_name);

@@ -3,8 +3,8 @@
 using namespace std;
 
  Player::Player() {
-	 askPlayer();
-	 cout << "Player " << playerName<<" has joined the game.\n";
+	 //askPlayer();
+	 //cout << "Player " << playerName<<" has joined the game.\n";
 }
 
  void Player::askPlayer() {
@@ -14,4 +14,8 @@ using namespace std;
 
  string Player::getName() const {
 	 return playerName;
+ }
+
+ void Player::setPlayerName(const string& name) {
+	 playerName = name;
  }

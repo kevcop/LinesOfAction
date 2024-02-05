@@ -11,10 +11,14 @@ class Game {
 private:
 	Player p1;
 	Player p2;
-	Player currrentPlayerTurn;
+	Player *currrentPlayerTurn;
+	bool isPlayer1Turn;
 public:
-	Game(Player p1, Player p2);
+	Game();
+	void setPlayerNames(const string& player1Name, const string& player2Name);
 	void coinToss();
+
 	void switchTurn();
+	void displayPlayerJoin(const Player& player);
 };
 #endif // !GAME_H

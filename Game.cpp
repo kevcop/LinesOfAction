@@ -3,8 +3,19 @@
 #include <iostream>
 using namespace std;
 
-Game::Game(Player p1, Player p2): p1(p1), p2(p2) {
-	//coinToss();
+//Game::Game(Player p1, Player p2): p1(p1), p2(p2) {
+//	//coinToss();
+//}
+Game::Game() : isPlayer1Turn(false) {
+
+}
+void Game::setPlayerNames(const string &player1Name, const string &player2Name) {
+	p1.setPlayerName(player1Name);
+	p2.setPlayerName(player2Name);
+	cout << "Player 1 :" << p1.getName() << "\n";
+	cout << "Player 2 :" << p2.getName() << "\n";
+
+
 }
 void Game::coinToss() 
 {
@@ -35,3 +46,8 @@ void Game::coinToss()
 //	}
 //	cout << "It's " << currrentPlayerTurn.getName() << "'s turn!\n";
 //}
+void Game::displayPlayerJoin(const Player& player) {
+	cout << "Player " << player.getName() << " has joined the game.\n";
+
+	cout << "Player " << p1.getName() << "has joined\n";
+}
