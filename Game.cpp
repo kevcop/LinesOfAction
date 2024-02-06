@@ -17,7 +17,7 @@ void Game::setPlayerNames(const string &player1Name, const string &player2Name) 
 
 
 }
-void Game::coinToss() 
+void Game::coinToss(const string& player1Name, const string& player2Name)
 {
 	int userChoice;
 	int firstTurn;
@@ -25,6 +25,14 @@ void Game::coinToss()
 	cout << "Enter 1 for heads or 2 for tails.\n";
 	cin >> userChoice;
 	toss = rand() % 2 + 1;
+	if ((userChoice == toss)) {
+		cout << "player " << player1Name << "wins the coin toss and will go first\n";
+		currrentPlayerTurn->setPlayerName(player1Name);
+	}
+	else {
+		cout << "Player " << player2Name << "wins the coin toss and will go first.\n";
+		currrentPlayerTurn->setPlayerName(player2Name);
+	}
 	/*if ((userChoice == 1 and toss == 1) || (userChoice == 2 && toss == 2)) {
 		cout << "Player " << p1.getName() << " wins the coin toss and will go first\n";
 		currrentPlayerTurn = p1;
@@ -51,3 +59,4 @@ void Game::displayPlayerJoin(const Player& player) {
 
 	cout << "Player " << p1.getName() << "has joined\n";
 }
+//player pointer, computer and human classes

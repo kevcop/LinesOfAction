@@ -19,7 +19,7 @@ int main() {
     cin >> p2_name;
     Game startGame;
     startGame.setPlayerNames(p1_name, p2_name);
-    startGame.coinToss();
+    startGame.coinToss(p1_name,p2_name);
     //Player p1_name;
     //Player p2_name;
     //Game startGame(p1_name, p2_name);

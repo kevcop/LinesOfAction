@@ -16,7 +16,7 @@ private:
 public:
 	Game();
 	void setPlayerNames(const string& player1Name, const string& player2Name);
-	void coinToss();
+	void coinToss(const string& player1Name, const string& player2Name);
 
 	void switchTurn();
 	void displayPlayerJoin(const Player& player);
