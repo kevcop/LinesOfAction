@@ -5,6 +5,8 @@
 #include "board.h"
 #include "Player.h"
 #include "Game.h"
+#include "HumanPlayer.h"
+#include "ComputerPlayer.h"
 using namespace std;
 
 int main() {
@@ -12,16 +14,27 @@ int main() {
     
     cout << "INITIAL BOARD\n";
     gameBoard.showBoard();
-    string p1_name, p2_name;
+
+    HumanPlayer humanPlayer("John");
+    ComputerPlayer computerPlayer("AI");
+
+    // Example test for ComputerPlayer (this should be adjusted to fit your implementation)
+    computerPlayer.selectPiece('A', 1);
+    computerPlayer.setDestination('B', 2);
+
+    auto piece = computerPlayer.getSelectedPiece();
+    auto destination = computerPlayer.getDestination();
+
+    /*string p1_name, p2_name;
     cout << "Enter player 1 name: \n";
     cin >> p1_name;
     cout << "Enter player 2 name: \n";
-    cin >> p2_name;
-    Game startGame;
+    cin >> p2_name;*/
+   /* Game startGame;
     startGame.setPlayerNames(p1_name, p2_name);
-    startGame.coinToss(p1_name,p2_name);
+    startGame.coinToss(p1_name,p2_name);*/
 
-    startGame.playerMove();
+    //startGame.playerMove();
     //Player p1_name;
     //Player p2_name;
     //Game startGame(p1_name, p2_name);
