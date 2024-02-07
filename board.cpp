@@ -57,7 +57,7 @@ void Board::showBoard() {
         cout << "    +------------------------+" << endl;
         cout << "  " << i + 1 << " |";
         for (int j = 0; j < COLS; ++j) {
-            cout << " " << (board[i][j] == 'S' ? '.' : board[i][j]) << " ";
+            cout << " " << (board[i][j] == '.' ? '.' : board[i][j]) << " ";
         }
         cout << "| " << i + 1 << endl;
     }

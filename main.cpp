@@ -3,14 +3,29 @@
 
 #include <iostream>
 #include "board.h"
+#include "Player.h"
+#include "Game.h"
 using namespace std;
 
 int main() {
     Board gameBoard; // create board object
-
+    
     cout << "INITIAL BOARD\n";
     gameBoard.showBoard();
+    string p1_name, p2_name;
+    cout << "Enter player 1 name: \n";
+    cin >> p1_name;
+    cout << "Enter player 2 name: \n";
+    cin >> p2_name;
+    Game startGame;
+    startGame.setPlayerNames(p1_name, p2_name);
+    startGame.coinToss(p1_name,p2_name);
+    //Player p1_name;
+    //Player p2_name;
+    //Game startGame(p1_name, p2_name);
 
+    //cout << "Player 1: " << p1_name.getName() << endl;
+    //Player p1(p1_name);
     return 0;
 }//this is a test
 
