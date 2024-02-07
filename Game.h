@@ -4,6 +4,7 @@
 #define PLAYER_h
 #include "Player.h"
 #include <iostream>
+#include <utility>
 
 using namespace std;
 
@@ -13,6 +14,7 @@ private:
 	Player p2;
 	Player *currrentPlayerTurn;
 	bool isPlayer1Turn;
+	pair <char, int> destination;
 public:
 	Game();
 	void setPlayerNames(const string& player1Name, const string& player2Name);
@@ -20,5 +22,12 @@ public:
 
 	void switchTurn();
 	void displayPlayerJoin(const Player& player);
+
+	void playerMove();
+	void promptMove();
+	void promptDestination();
+	pair<char, int> getDestination()const {
+		return destination;
+	}
 };
 #endif // !GAME_H

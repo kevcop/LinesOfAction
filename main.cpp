@@ -20,6 +20,8 @@ int main() {
     Game startGame;
     startGame.setPlayerNames(p1_name, p2_name);
     startGame.coinToss(p1_name,p2_name);
+
+    startGame.playerMove();
     //Player p1_name;
     //Player p2_name;
     //Game startGame(p1_name, p2_name);
