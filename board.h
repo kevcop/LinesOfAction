@@ -14,5 +14,8 @@ public:
     Board();//construct
     void showBoard() const;//display board
     void resetBoard();//initialize board
+    bool placePiece(int row, int col, char pieceType);
+    bool movePiece(int startRow, int startCol, int endRow, int endCol, char player);
+
 };
 #endif

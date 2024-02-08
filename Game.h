@@ -3,6 +3,7 @@
 #define GAME_H
 #define PLAYER_h
 #include "Player.h"
+#include "board.h"
 #include <iostream>
 #include <utility>
 
@@ -13,14 +14,19 @@ private:
 	Player *player1;
 	Player *player2;
 	Player *currentPlayer;
+	Board gameBoard;
 	bool isPlayer1Turn;
 	pair <char, int> destination;
+	pair<int, int> parseInput(const string& input) const;
+
 public:
-	Game(Player* p1, Player * p2):player1(p1),player2(p2),currentPlayer(nullptr){}
+	Game(Player* p1, Player* p2);
 	void setPlayerNames(const string& player1Name, const string& player2Name);
 	void coinToss();
 
 	void switchTurn();
+
+	void playerTurn();
 	void displayPlayerJoin(const Player& player);
 
 	void playerMove();
@@ -29,5 +35,6 @@ public:
 	pair<char, int> getDestination()const {
 		return destination;
 	}
+
 };
 #endif // !GAME_H

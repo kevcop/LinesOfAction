@@ -12,6 +12,7 @@ protected:
     int turn;
     std::pair<char, int> piece;
     std::pair<char, int> destination;
+    char pieceType;
 
 public:
     Player() = default;
@@ -30,6 +31,7 @@ public:
     bool operator==(const Player& other) const {
         return playerName == other.playerName;
     }
+    char getPieceType() const { return pieceType; }
 };
 
 #endif
