@@ -1,7 +1,8 @@
 #include "HumanPlayer.h"
 #include <iostream>
+#include <string> // This include is actually redundant because string is included in HumanPlayer.h
 
-HumanPlayer::Human(const std::string& name) : Player(name) {}
+HumanPlayer::HumanPlayer(const std::string& name) : Player(name) {}
 
 void HumanPlayer::askPlayer() {
     std::cout << "Enter your name: ";
@@ -9,11 +10,11 @@ void HumanPlayer::askPlayer() {
 }
 
 void HumanPlayer::selectPiece(char row, int col) {
-    piece = { row, col };
+    piece = std::make_pair(row, col);
 }
 
 void HumanPlayer::setDestination(char row, int col) {
-    destination = { row, col };
+    destination = std::make_pair(row, col);
 }
 
 std::pair<char, int> HumanPlayer::getSelectedPiece() const {
@@ -25,5 +26,7 @@ std::pair<char, int> HumanPlayer::getDestination() const {
 }
 
 std::string HumanPlayer::properNotation(std::pair<int, int> position) const {
-    return std::string(1, position.first + 'A') + std::to_string(position.second + 1);
+    // Assuming the row is represented by 'position.first' and column by 'position.second'
+    // Adjust the conversion if your indexing starts from 0 or 1 accordingly
+    return std::string(1, static_cast<char>('A' + position.first)) + std::to_string(position.second + 1);
 }

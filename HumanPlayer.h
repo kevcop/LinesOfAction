@@ -1,10 +1,11 @@
 #pragma once
 #include "Player.h"
+#include <string>
 
-class Human :public Player {
+class HumanPlayer :public Player {
 public:
-	Human() = default;
-	explicit HumanPlayer(const string& name);
+    HumanPlayer() = default;
+    explicit HumanPlayer(const string& name);
 
     void askPlayer() override;
     void selectPiece(char row, int col) override;

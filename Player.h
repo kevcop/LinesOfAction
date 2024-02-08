@@ -34,5 +34,5 @@ public:
 
 #endif
 
-#endif // !PLAYER_H
+ // !PLAYER_H
 

@@ -15,15 +15,19 @@ int main() {
     cout << "INITIAL BOARD\n";
     gameBoard.showBoard();
 
-    HumanPlayer humanPlayer("John");
+    HumanPlayer humanPlayer("Kevin");
     ComputerPlayer computerPlayer("AI");
 
+    Game game(&humanPlayer, &computerPlayer);
+
+    game.coinToss();
+
     // Example test for ComputerPlayer (this should be adjusted to fit your implementation)
-    computerPlayer.selectPiece('A', 1);
+ /*   computerPlayer.selectPiece('A', 1);
     computerPlayer.setDestination('B', 2);
 
     auto piece = computerPlayer.getSelectedPiece();
-    auto destination = computerPlayer.getDestination();
+    auto destination = computerPlayer.getDestination();*/
 
     /*string p1_name, p2_name;
     cout << "Enter player 1 name: \n";

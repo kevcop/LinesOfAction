@@ -1,7 +1,8 @@
 #include "ComputerPlayer.h"
 #include <iostream>
+#include <string>
 
-ComputerPlayer::Computer(const std::string& name) : Player(name) {}
+ComputerPlayer::ComputerPlayer(const std::string& name) : Player(name) {}
 
 void ComputerPlayer::askPlayer() {
     // For a computer player, this might set a default name or generate one.
@@ -10,12 +11,12 @@ void ComputerPlayer::askPlayer() {
 
 void ComputerPlayer::selectPiece(char row, int col) {
     // AI logic to select a piece. Placeholder example:
-    piece = { row, col }; // This would be determined by the AI's strategy.
+    piece = std::make_pair(row, col); // This would be determined by the AI's strategy.
 }
 
 void ComputerPlayer::setDestination(char row, int col) {
     // AI logic to set a destination. Placeholder example:
-    destination = { row, col }; // This would be determined by the AI's strategy.
+    destination = std::make_pair(row, col); // This would be determined by the AI's strategy.
 }
 
 std::pair<char, int> ComputerPlayer::getSelectedPiece() const {
@@ -27,5 +28,6 @@ std::pair<char, int> ComputerPlayer::getDestination() const {
 }
 
 std::string ComputerPlayer::properNotation(std::pair<int, int> position) const {
-    return std::string(1, position.first + 'A') + std::to_string(position.second + 1);
+    // Adjust the conversion if your indexing starts from 0 or 1 accordingly
+    return std::string(1, static_cast<char>('A' + position.first)) + std::to_string(position.second + 1);
 }

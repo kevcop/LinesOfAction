@@ -1,7 +1,9 @@
 #pragma once
+#pragma once
 #include "Player.h"
+#include <string>
 
-class Computer : public Player {
+class ComputerPlayer : public Player {
 public:
     ComputerPlayer() = default;
     explicit ComputerPlayer(const std::string& name);
