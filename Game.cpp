@@ -71,29 +71,31 @@ void Game::promptDestination() {
 }
 
 void Game::playerTurn() {
-    std::string from, to;
-    std::cout << currentPlayer->getName() << ", enter your move from (e.g., A6): ";
-    std::cin >> from;
-    std::cout << "Enter your move to (e.g., B6): ";
-    std::cin >> to;
+    bool moveSuccessful = false;
+    while (!moveSuccessful) {
+        std::string from, to;
+        std::cout << currentPlayer->getName() << ", it's your turn. " << std::endl;
+        std::cout << "Enter your move (e.g., A6 to B6): ";
+        std::cin >> from >> to;
 
-    auto [startRow, startCol] = parseInput(from); // Ensure parseInput is correctly implemented
-    auto [endRow, endCol] = parseInput(to);
+        auto [startRow, startCol] = parseInput(from);
+        auto [endRow, endCol] = parseInput(to);
 
-    if (startRow != -1 && startCol != -1 && endRow != -1 && endCol != -1) {
-        if (gameBoard.movePiece(startRow, startCol, endRow, endCol,currentPlayer->getPieceType())) {
-            std::cout << "Move successful.\n";
+        // Check for valid input before attempting to move
+        if (startRow != -1 && startCol != -1 && endRow != -1 && endCol != -1) {
+            moveSuccessful = gameBoard.movePiece(startRow, startCol, endRow, endCol, currentPlayer->getPieceType());
+            if (!moveSuccessful) {
+                std::cout << "Invalid move. Please try again." << std::endl;
+            }
         }
         else {
-            std::cout << "Invalid move. Try again.\n";
+            std::cout << "Invalid input format. Please use the format 'A6 to B6'." << std::endl;
         }
     }
-    else {
-        std::cout << "Invalid input format.\n";
-    }
 
-    switchTurn(); // Assuming switchTurn correctly changes the currentPlayer
+    switchTurn(); // Move to next player's turn
 }
+
 
 
 // Define parseInput function if not already defined
@@ -101,21 +103,21 @@ void Game::playerTurn() {
 //    // Implementation as discussed previously
 //}
 
-std::pair<int, int> Game::parseInput(const std::string& input) const {
+pair<int, int> Game::parseInput(const std::string& input) const {
     if (input.length() != 2) {
-        return { -1, -1 }; // Invalid input format
+        return { -1, -1 }; // Invalid format
     }
 
-    int col = toupper(input[0]) - 'A'; // Convert column letter to index (0-7 for A-H)
-    int row = 8 - (input[1] - '0'); // Convert row number to index (0-7 for 1-8, assuming top-down numbering)
+    int col = toupper(input[0]) - 'A'; // Convert column letter to 0-based index
+    int row = '8' - input[1]; // Convert row number to 0-based index
 
-    // Validate row and column indices are within board bounds
     if (row >= 0 && row < 8 && col >= 0 && col < 8) {
         return { row, col };
     }
     else {
-        return { -1, -1 }; // Return an invalid position if out of bounds
+        return { -1, -1 }; // Out of bounds
     }
 }
+
 
 // Additional methods...

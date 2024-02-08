@@ -21,7 +21,7 @@ int main() {
     Game game(&humanPlayer, &computerPlayer);
 
     game.coinToss();
-
+    game.playerMove();
     // Example test for ComputerPlayer (this should be adjusted to fit your implementation)
  /*   computerPlayer.selectPiece('A', 1);
     computerPlayer.setDestination('B', 2);
