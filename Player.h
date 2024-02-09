@@ -31,6 +31,7 @@ public:
     bool operator==(const Player& other) const {
         return playerName == other.playerName;
     }
+    void setPieceType(char type) { pieceType = type; };
     char getPieceType() const { return pieceType; }
 };
 

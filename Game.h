@@ -17,7 +17,7 @@ private:
 	Board gameBoard;
 	bool isPlayer1Turn;
 	pair <char, int> destination;
-	pair<int, int> parseInput(const string& input) const;
+	//pair<int, int> parseInput(const string& input) const;
 
 public:
 	Game(Player* p1, Player* p2);
@@ -35,6 +35,11 @@ public:
 	pair<char, int> getDestination()const {
 		return destination;
 	}
+	void logMove(const string& from, const string& to);
+	void displayMoveLog() const;
 
+	void promptPieceLocation(string& locationDescription);
+	int translateColumn(char columnLetter);
+	
 };
 #endif // !GAME_H

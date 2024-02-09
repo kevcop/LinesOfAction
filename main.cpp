@@ -21,7 +21,18 @@ int main() {
     Game game(&humanPlayer, &computerPlayer);
 
     game.coinToss();
-    game.playerMove();
+    game.playerTurn();
+ 
+    //for (int i = 0; i < 2; ++i) {
+    //    cout << "Current Board:" << endl;
+    //    gameBoard.showBoard();  // Display the current state of the board
+
+    //    game.playerMove();  // Prompt the current player for a move and execute it
+
+    //    // Optionally, after each move, you can display the move log to see the history of moves
+    //    game.displayMoveLog();
+    //}
+    //game.playerMove();
     // Example test for ComputerPlayer (this should be adjusted to fit your implementation)
  /*   computerPlayer.selectPiece('A', 1);
     computerPlayer.setDestination('B', 2);
