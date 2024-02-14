@@ -10,236 +10,184 @@
 #include <map>
 #include <vector>
 using namespace std;
+//used to keep track of moves
 vector<string> moveLog;
-std::map<char, int> colToIndex = {
-    {'A', 0}, {'B', 1}, {'C', 2}, {'D', 3},
-    {'E', 4}, {'F', 5}, {'G', 6}, {'H', 7}
+//translate cols
+map<char, int> colToIndex = {
+{'A', 0}, {'B', 1}, {'C', 2}, {'D', 3},
+{'E', 4}, {'F', 5}, {'G', 6}, {'H', 7}
 };
-
-
-// Constructor
-//Game::Game(Player* p1, Player* p2) : player1(p1), player2(p2), currentPlayer(nullptr), isPlayer1Turn(false) {
-//    std::srand(static_cast<unsigned int>(std::time(nullptr))); // Seed random once per game start
-//}
+//cosntructor for setting board and players
 Game::Game(Player* p1, Player* p2) : player1(p1), player2(p2), currentPlayer(nullptr), isPlayer1Turn(true) {
-    std::srand(static_cast<unsigned int>(std::time(nullptr))); // Seed random
-    gameBoard.resetBoard(); // Initialize the board
+srand(static_cast<unsigned int>(time(nullptr))); // seed
+gameBoard.resetBoard(); // Initialize the board
 }
-
+//decide who goes first
 void Game::coinToss() {
-    std::cout << "Enter 1 for heads or 2 for tails.\n";
-    int userChoice;
-    std::cin >> userChoice;
-    int toss = std::rand() % 2 + 1; // Generates a random number, either 1 or 2
-
-    if (userChoice == toss) {
-        currentPlayer = player1;
-        std::cout << "Player " << player1->getName() << " wins the coin toss and will go first.\n";
-        player1->setPieceType('B');
-        player2->setPieceType('W');
-    }
-    else {
-        currentPlayer = player2;
-        std::cout << "Player " << player2->getName() << " wins the coin toss and will go first.\n";
-        player2->setPieceType('B');
-        player1->setPieceType('W');
-    }
+cout << "Enter 1 for heads or 2 for tails.\n";
+int userChoice;
+cin >> userChoice;
+int toss = rand() % 2 + 1; // get rand num
+// assign first move
+if (userChoice == toss) {
+currentPlayer = player1;
+cout << "Player " << player1->getName() << " wins the coin toss and will go first.\n";
+player1->setPieceType('B');
+player2->setPieceType('W');
 }
-
+else {
+currentPlayer = player2;
+cout << "Player " << player2->getName() << " wins the coin toss and will go first.\n";
+player2->setPieceType('B');
+player1->setPieceType('W');
+}
+}
+// change turns
 void Game::switchTurn() {
-    if (currentPlayer == player1) {
-        currentPlayer = player2;
-    }
-    else {
-        currentPlayer = player1;
-    }
-    std::cout << "It's now " << currentPlayer->getName() << "'s turn.\n";
+if (currentPlayer == player1) {
+currentPlayer = player2;
 }
-
+else {
+currentPlayer = player1;
+}
+cout << "It's now " << currentPlayer->getName() << "'s turn.\n";
+}
+// logic for movement
 void Game::playerMove() {
-    promptMove();
-    promptDestination();
-    std::cout << "Player " << currentPlayer->getName() << " moves piece from "
-        << currentPlayer->properNotation(currentPlayer->getSelectedPiece())
-        << " to " << currentPlayer->properNotation(currentPlayer->getDestination()) << std::endl;
-    switchTurn();
+promptMove();
+promptDestination();
+cout << "Player " << currentPlayer->getName() << " moves piece from "
+<< currentPlayer->properNotation(currentPlayer->getSelectedPiece())
+<< " to " << currentPlayer->properNotation(currentPlayer->getDestination()) << endl;
+switchTurn();
 }
-
+//ask for move
 void Game::promptMove() {
-    std::string from, to;
-    std::cout << currentPlayer->getName() << ", it's your turn." << std::endl;
-    std::cout << "Enter your move from (e.g., A6): ";
-    std::cin >> from;
-    std::cout << "Enter move to (e.g., B6): ";
-    std::cin >> to;
+string from, to;
+cout << currentPlayer->getName() << ", it's your turn." << endl;
+cout << "Enter your move from (e.g., A6): ";
+cin >> from;
+cout << "Enter move to (e.g., B6): ";
+cin >> to;
 
-    // Convert inputs using the map
-    int fromCol = colToIndex[toupper(from[0])];
-    int fromRow = from[1] - '1'; // Assuming row input is 1-8, adjust to 0-based index
-    int toCol = colToIndex[toupper(to[0])];
-    int toRow = to[1] - '1';
+// Convert inputs using the map
+int fromCol = colToIndex[toupper(from[0])];
+int fromRow = from[1] - '1';
+int toCol = colToIndex[toupper(to[0])];
+int toRow = to[1] - '1';
 
-    // Assuming Board class has a method to execute move
-    if (gameBoard.movePiece(fromRow, fromCol, toRow, toCol, currentPlayer->getPieceType())) {
-        logMove(from, to);
-    }
-    else {
-        std::cout << "Invalid move. Please try again." << std::endl;
-    }
+if (gameBoard.movePiece(fromRow, fromCol, toRow, toCol, currentPlayer->getPieceType())) {
+logMove(from, to);
 }
-
-
-
+else {
+cout << "Invalid move. Please try again." << endl;
+}
+}
+//ask for destination
 void Game::promptDestination() {
-    char colLetter;
-    int row;
-    cout << currentPlayer->getName() << ", select a destination for the piece." << endl;
-    cout << "Column (A-H): ";
-    cin >> colLetter;
-    cout << "Row (1-8): ";
-    cin >> row;
+char colLetter;
+int row;
+cout << currentPlayer->getName() << ", select a destination for the piece." << endl;
+cout << "Column (A-H): ";
+cin >> colLetter;
+cout << "Row (1-8): ";
+cin >> row;
 
-    // Convert column letter to index
-    int col = toupper(colLetter) - 'A';
-    if (col >= 0 && col < 8 && row >= 1 && row <= 8) {
-        currentPlayer->setDestination(row - 1, col); // Adjust row to 0-based index
-    }
-    else {
-        cout << "Invalid input. Please try again." << endl;
-    }
+//convert column letter to index
+int col = toupper(colLetter) - 'A';
+if (col >= 0 && col < 8 && row >= 1 && row <= 8) {
+currentPlayer->setDestination(row - 1, col); // 0 based indexing adjustment
 }
-
-
-//void Game::playerTurn() {
-//    bool moveSuccessful = false;
-//    while (!moveSuccessful) {
-//        std::string from, to;
-//        std::cout << currentPlayer->getName() << ", it's your turn. " << std::endl;
-//        std::cout << "Enter your move (e.g., A6 to B6): ";
-//        std::cin >> from >> to;
-//
-//        auto [startRow, startCol] = parseInput(from);
-//        auto [endRow, endCol] = parseInput(to);
-//
-//        // Check for valid input before attempting to move
-//        if (startRow != -1 && startCol != -1 && endRow != -1 && endCol != -1) {
-//            moveSuccessful = gameBoard.movePiece(startRow, startCol, endRow, endCol, currentPlayer->getPieceType());
-//            if (!moveSuccessful) {
-//                std::cout << "Invalid move. Please try again." << std::endl;
-//            }
-//        }
-//        else {
-//            std::cout << "Invalid input format. Please use the format 'A6 to B6'." << std::endl;
-//        }
-//    }
-//
-//    switchTurn(); // Move to next player's turn
-//}
-// Inside Game.h or Game.cpp, depending on your structure
-
+else {
+cout << "Invalid input. Please try again." << endl;
+}
+}
+// handles the move logic and validates
 void Game::playerTurn() {
-    std::string fromLocation, toLocation;
+cout << currentPlayer->getName() << ", it's your turn." << endl;
 
-    std::cout << currentPlayer->getName() << ", it's your turn." << std::endl;
+char fromColLetter, toColLetter;
+int fromRow, toRow;
 
-    // Prompt for current location of the piece
-    std::cout << "Select a piece to move." << std::endl;
-    promptPieceLocation(fromLocation);
+// Prompt for current location of the piece
+cout << "Select a piece to move." << endl;
+cout << "Column (A-H): ";
+cin >> fromColLetter;
+cout << "Row (1-8): ";
+cin >> fromRow;
 
-    // Prompt for destination
-    std::cout << "Select a destination for the piece." << std::endl;
-    promptPieceLocation(toLocation);
+int fromCol = toupper(fromColLetter) - 'A';
+fromRow -= 1;
 
-    // Process the move
-    int fromCol = fromLocation[0] - '0';
-    int fromRow = fromLocation[1] - '0';
-    int toCol = toLocation[0] - '0';
-    int toRow = toLocation[1] - '0';
+//ask for location
+cout << "Select a destination for the piece." << endl;
+cout << "Column (A-H): ";
+cin >> toColLetter;
+cout << "Row (1-8): ";
+cin >> toRow;
 
-    logMove(fromLocation, toLocation);
 
-    displayMoveLog();
-    //if (gameBoard.movePiece(fromRow, fromCol, toRow, toCol, currentPlayer->getPieceType())) {
-    //    std::cout << "Move successful." << std::endl;
-    //    // Optionally log the move here
-    //}
-    //else {
-    //    std::cout << "Invalid move. Please try again." << std::endl;
-    //}
+int toCol = toupper(toColLetter) - 'A';
+toRow -= 1;
 
-    // Assuming you have a method to switch turns
 
-    switchTurn();
+// validation checks
+if (rules.isValidMove(gameBoard, *currentPlayer, fromRow, fromCol, toRow, toCol) &&
+rules.isPathClear(gameBoard, fromRow, fromCol, toRow, toCol, currentPlayer->getPieceType()) &&
+rules.isValidEndingPosition(gameBoard, toRow, toCol, currentPlayer->getPieceType())) {
+
+// execute the move
+gameBoard.movePiece(fromRow, fromCol, toRow, toCol, currentPlayer->getPieceType());
+
+// record move
+string fromPosition = fromColLetter + to_string(fromRow + 1);
+string toPosition = toColLetter + to_string(toRow + 1);
+logMove(fromPosition, toPosition);
+displayMoveLog();
+
+cout << "Move successful." << endl;
+}
+else {
+cout << "Invalid move. Please try again." << endl;
+return; // dont want to switch turns if invalid move
 }
 
-
-
-// Define parseInput function if not already defined
-//std::pair<int, int> parseInput(const std::string& input) {
-//    // Implementation as discussed previously
-//}
-
-//pair<int, int> Game::parseInput(const std::string& input) const {
-//    //if (input.length() != 2) {
-//    //    return { -1, -1 }; // Invalid format
-//    //}
-//
-//    //auto colIt = columnMap.find(toupper(input[0])); // Find the column in the map
-//    //int row = input[1] - '1'; // Convert row from '1'-'8' to 0-7
-//
-//    //if (colIt != columnMap.end() && row >= 0 && row < 8) {
-//    //    return { row, colIt->second }; // Return the row and the found column index
-//    //}
-//    //else {
-//    //    return { -1, -1 }; // Out of bounds or invalid column
-//    //}
-//    return 0;
-//}
-//void Game::logMove(const std::string& from, const std::string& to) {
-//    std::string moveSummary = currentPlayer->getName() + " moves from " + from + " to " + to;
-//    moveLog.push_back(moveSummary);
-//}
-void Game::logMove(const std::string& from, const std::string& to) {
-    // Assuming from and to are in the format "colIndexRowIndex"
-    int fromColIndex = std::stoi(from.substr(0, 1));
-    int fromRowIndex = std::stoi(from.substr(1, 1)) + 1; // Adjust for user-friendly display
-    int toColIndex = std::stoi(to.substr(0, 1));
-    int toRowIndex = std::stoi(to.substr(1, 1)) + 1; // Adjust for user-friendly display
-
-    // Convert column index back to letter
-    char fromColLetter = 'A' + fromColIndex;
-    char toColLetter = 'A' + toColIndex;
-
-    std::string moveSummary = currentPlayer->getName() + " moves from " + fromColLetter + std::to_string(fromRowIndex) + " to " + toColLetter + std::to_string(toRowIndex);
-    moveLog.push_back(moveSummary);
+switchTurn(); //next player's turn
 }
 
+// record recent move
+void Game::logMove(const string& from, const string& to) {
 
+string moveSummary = currentPlayer->getName() + " moves from " + from + " to " + to;
+moveLog.push_back(moveSummary);
+}
 
+// record all moves
 void Game::displayMoveLog() const {
-    cout << "Move Log:" << endl;
-    for (const auto& move : moveLog) {
-        cout << move << endl;
-    }
+cout << "Move Log:" << endl;
+for (const auto& move : moveLog) {
+cout << move << endl;
+}
 }
 
-void Game::promptPieceLocation(std::string& locationDescription) {
-    char column;
-    int row;
-    std::cout << "Enter column (A-H): ";
-    std::cin >> column;
-    std::cout << "Enter row (1-8): ";
-    std::cin >> row;
+// ask fo location index
+void Game::promptPieceLocation(string& locationDescription) {
+char column;
+int row;
+cout << "Enter column (A-H): ";
+cin >> column;
+cout << "Enter row (1-8): ";
+cin >> row;
 
-    int colIndex = translateColumn(toupper(column)); // Ensure uppercase for map access
-    locationDescription = std::to_string(colIndex) + std::to_string(row - 1); // Store as "colIndexRowIndex"
+int colIndex = translateColumn(toupper(column));
+locationDescription = to_string(colIndex) + to_string(row - 1);
 }
 
+//translate column 
 int Game::translateColumn(char columnLetter) {
-    if (colToIndex.find(columnLetter) != colToIndex.end()) {
-        return colToIndex[columnLetter];
-    }
-    return -1; // Indicate invalid input
+if (colToIndex.find(columnLetter) != colToIndex.end()) {
+return colToIndex[columnLetter];
+}
+return -1; // not a valid input
 }
 
-// Additional methods...

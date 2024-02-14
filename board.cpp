@@ -45,28 +45,42 @@ void Board::showBoard() const {
     }
     std::cout << std::endl;
 }
+
+//places piece is position is empty and valid
 bool Board::placePiece(int row, int col, char pieceType) {
-    // Validate the position and piece type
+    //validate the position and piece type
     if (row >= 0 && row < ROWS && col >= 0 && col < COLS && (pieceType == 'B' || pieceType == 'W')) {
-        // Check if the position is empty
+        //check if the position is empty
         if (board[row][col] == '.') {
-            board[row][col] = pieceType; // Place the piece
-            return true; // Placement successful
+            board[row][col] = pieceType; //place the piece
+            return true; // successful
         }
     }
-    return false; // Invalid position or not empty
+    return false;
 }
-
+//moves piece on the board if move is deemed valid 
 bool Board::movePiece(int startRow, int startCol, int endRow, int endCol,char player) {
-    // Validate positions and ensure the move is by the correct player
+    // validation
     if (startRow >= 0 && startRow < ROWS && startCol >= 0 && startCol < COLS &&
         endRow >= 0 && endRow < ROWS && endCol >= 0 && endCol < COLS &&
         board[startRow][startCol] == player && board[endRow][endCol] == '.') {
 
-        // Make the move
+        //actual movement
         board[endRow][endCol] = player;
-        board[startRow][startCol] = '.'; // Clear the starting position
+        board[startRow][startCol] = '.'; // clear the starting position
         return true; // Move successful
     }
-    return false; // Move failed
+    return false; //invalid move
+}
+//retrieves piece from a location
+char Board::getPieceAt(int row, int col) const {
+    if (row >= 0 && row < ROWS && col >= 0 && col < COLS) {
+        return board[row][col];
+    }
+    return ' '; //out of bounds
+}
+
+//validate if within board boundaries 
+bool Board::isPositionValid(int row, int col) const {
+    return row >= 0 and row < ROWS && col >= 0 && col < COLS;
 }
