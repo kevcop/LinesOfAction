@@ -5,11 +5,11 @@
 #include "board.h"
 #include "Player.h"
 #include <utility>
-
+#include <vector>
 class Rules {
 public:
     //determine if move is valid
-    static bool isValidMove(const Board& board, const Player& player, int startRow, int startCol, int endRow, int endCol);
+    static bool isValidMove(Board& board, const Player& player, int startRow, int startCol, int endRow, int endCol);
     //determine amount of space moves
     //static int countPiecesInLine(const Board& board, int row, int col, char direction);
     //not yet implemented but capturing logic
@@ -17,7 +17,7 @@ public:
     //check for won round
     static bool checkWinCondition(const Board& board, const Player& player);
     //check if path is valid
-    static bool isPathClear(const Board& board, int startRow, int startCol, int endRow, int endCol, char playerPieceType);
+    //static bool isPathClear(const Board& board, int startRow, int startCol, int endRow, int endCol, char playerPieceType);
     //determine if ending spot is valid 
     static bool isValidEndingPosition(const Board& board, int endRow, int endCol, char pieceType);
     //method to handle diagonal moves
@@ -43,6 +43,8 @@ public:
     static char determineDiagonalDirection(int startRow, int startCol, int endRow, int endCol);
     static int countPiecesInLine(const Board& board, int startRow, int startCol, char direction);
 
+    static bool isPathClear(const Board& board, int startRow, int startCol, int endRow, int endCol, char playerPieceType, vector<pair<int, int>>& capturePositions);
+    static void processCaptures(Board& board, const vector<pair<int, int>>& captures);
 
 private:
     static std::pair<int, int> directionOffsets(char direction); //diagonal logic

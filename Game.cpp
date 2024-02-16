@@ -129,11 +129,11 @@ cin >> toRow;
 
 int toCol = toupper(toColLetter) - 'A';
 toRow -= 1;
-
+vector<pair<int, int>> capturePositions;
 
 // validation checks
 if (rules.isValidMove(gameBoard, *currentPlayer, fromRow, fromCol, toRow, toCol) &&
-rules.isPathClear(gameBoard, fromRow, fromCol, toRow, toCol, currentPlayer->getPieceType()) &&
+rules.isPathClear(gameBoard, fromRow, fromCol, toRow, toCol, currentPlayer->getPieceType(),capturePositions) &&
 rules.isValidEndingPosition(gameBoard, toRow, toCol, currentPlayer->getPieceType())) {
 
 // execute the move

@@ -84,3 +84,7 @@ char Board::getPieceAt(int row, int col) const {
 bool Board::isPositionValid(int row, int col) const {
     return row >= 0 and row < ROWS && col >= 0 && col < COLS;
 }
+
+void Board::removePiece(int row, int col) {
+    board[row][col] = '.';
+}

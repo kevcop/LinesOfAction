@@ -19,6 +19,6 @@ public:
     bool movePiece(int startRow, int startCol, int endRow, int endCol, char player); //actual movement
     char getPieceAt(int row, int col) const; //retrieve a particular piece
     bool isPositionValid(int row, int col) const; //determine if location is within bounds
-
+    void removePiece(int row, int col);
 };
 #endif
