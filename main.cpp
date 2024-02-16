@@ -14,15 +14,15 @@ int main() {
     Board gameBoard; // create board object
     
     cout << "INITIAL BOARD\n";
-    gameBoard.showBoard();
+    //gameBoard.showBoard();
 
     HumanPlayer humanPlayer("Kevin");
     ComputerPlayer computerPlayer("AI");
 
     Game game(&humanPlayer, &computerPlayer);
-
-    game.coinToss();
-    game.playerTurn();
+    game.startGame();
+    //game.coinToss();
+    //game.playerTurn();
     /* OLD APPROACH */
     //for (int i = 0; i < 2; ++i) {
     //    cout << "Current Board:" << endl;

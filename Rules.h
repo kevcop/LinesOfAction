@@ -11,7 +11,7 @@ public:
     //determine if move is valid
     static bool isValidMove(const Board& board, const Player& player, int startRow, int startCol, int endRow, int endCol);
     //determine amount of space moves
-    static int countPiecesInLine(const Board& board, int row, int col, char direction);
+    //static int countPiecesInLine(const Board& board, int row, int col, char direction);
     //not yet implemented but capturing logic
     static bool handleCapture(Board& board, int endRow, int endCol);
     //check for won round
@@ -21,7 +21,29 @@ public:
     //determine if ending spot is valid 
     static bool isValidEndingPosition(const Board& board, int endRow, int endCol, char pieceType);
     //method to handle diagonal moves
-    static int countDiagonalPieces(const Board& board, int row, int col);
+    //static int countDiagonalPieces(const Board& board, int startRow, int startCol, int endRow, int endCol);
+    //static int countPiecesInLine(const Board& board, int row, int col, char direction);
+    //static int countDiagonalPieces(const Board& board, int startRow, int startCol, char direction);
+    //static int countDiagonalPieces(const Board& board, int startRow, int startCol, int endRow, int endCol);
+   static int countDiagonalPieces(const Board& board, int startRow, int startCol, char direction);
+
+// Updated to include parameters for the end position of the move
+    static int countPiecesInLine(const Board& board, int startRow, int startCol, int endRow, int endCol, char direction);
+
+    enum class DiagonalDirection {
+        Northeast,
+        Northwest,
+        Southeast,
+        Southwest,
+        None
+    };
+    
+    //DiagonalDirection determineDiagonalDirection(int startRow, int startCol, int endRow, int endCol);
+
+    static char determineDiagonalDirection(int startRow, int startCol, int endRow, int endCol);
+    static int countPiecesInLine(const Board& board, int startRow, int startCol, char direction);
+
+
 private:
     static std::pair<int, int> directionOffsets(char direction); //diagonal logic
 

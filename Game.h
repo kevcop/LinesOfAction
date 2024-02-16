@@ -51,6 +51,8 @@ public:
 	void promptPieceLocation(string& locationDescription);
 	//used for proper column identifying 
 	int translateColumn(char columnLetter);
+	//method for handling run of game
+	void startGame();
 	
 };
 #endif // !GAME_H

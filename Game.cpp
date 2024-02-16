@@ -146,6 +146,8 @@ logMove(fromPosition, toPosition);
 displayMoveLog();
 
 cout << "Move successful." << endl;
+
+gameBoard.showBoard();
 }
 else {
 cout << "Invalid move. Please try again." << endl;
@@ -189,5 +191,30 @@ if (colToIndex.find(columnLetter) != colToIndex.end()) {
 return colToIndex[columnLetter];
 }
 return -1; // not a valid input
+}
+
+void Game::startGame() {
+    // Initial setup, such as deciding who goes first
+    coinToss(); // Assume this method decides who starts and sets `currentPlayer` accordingly
+
+    // Main game loop
+    bool gameOver = false;
+    while (!gameOver) {
+        gameBoard.showBoard(); // Display the board at the start of each turn
+        playerTurn(); // Conduct the current player's turn
+
+        // Check for game-ending conditions, such as one player winning
+        // gameOver = checkWinCondition(gameBoard, *currentPlayer);
+        // if (gameOver) {
+        //     std::cout << currentPlayer->getName() << " wins!" << std::endl;
+        //     break;
+        // }
+
+        //switchTurn(); // Switch to the other player's turn
+    }
+
+    // Game has ended, display final board state and any concluding messages
+    gameBoard.showBoard();
+    std::cout << "Game over!" << std::endl;
 }
 
