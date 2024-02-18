@@ -88,3 +88,21 @@ bool Board::isPositionValid(int row, int col) const {
 void Board::removePiece(int row, int col) {
     board[row][col] = '.';
 }
+
+std::pair<int, int> Board::countPiecesByColor() const {
+    int blackCount = 0;
+    int whiteCount = 0;
+
+    for (int row = 0; row < 8; ++row) { // Assuming an 8x8 board
+        for (int col = 0; col < 8; ++col) {
+            if (board[row][col] == 'B') {
+                ++blackCount;
+            }
+            else if (board[row][col] == 'W') {
+                ++whiteCount;
+            }
+        }
+    }
+
+    return std::make_pair(blackCount, whiteCount);
+}

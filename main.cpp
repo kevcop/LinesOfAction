@@ -7,6 +7,7 @@
 #include "Game.h"
 #include "HumanPlayer.h"
 #include "ComputerPlayer.h"
+#include "Round.h"
 using namespace std;
 
 int main() {
@@ -19,7 +20,9 @@ int main() {
     HumanPlayer humanPlayer("Kevin");
     ComputerPlayer computerPlayer("AI");
 
-    Game game(&humanPlayer, &computerPlayer);
+   /* Game game(&humanPlayer, &computerPlayer);
+    game.startGame();*/
+    Round game(&humanPlayer, &computerPlayer);
     game.startGame();
     //game.coinToss();
     //game.playerTurn();
