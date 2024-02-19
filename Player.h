@@ -11,6 +11,7 @@ protected:
     std::pair<char, int> piece; //piece selection
     std::pair<char, int> destination; // desired move spot
     char pieceType; // B or W
+    bool wonLastRound = false;
 
 public:
     Player() = default; // default cons
@@ -37,6 +38,13 @@ public:
     void setPieceType(char type) { pieceType = type; };
     // retrieve piece color 
     char getPieceType() const { return pieceType; }
+
+    void setWonLastRound(bool won) {
+        wonLastRound = won;
+    }
+    bool getWonLastRound() {
+        return wonLastRound;
+    }
 };
 
 #endif

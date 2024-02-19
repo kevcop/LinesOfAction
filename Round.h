@@ -7,6 +7,7 @@
 #include <iostream>
 #include <utility>
 #include "Rules.h"
+#include "Tournament.h"
 
 using namespace std;
 
@@ -25,6 +26,8 @@ private:
 	Player* winner;
 	pair <char, int> destination; //location
 	Rules rules; //object of rules class to validate
+
+	bool skipCoinToss;
 
 public:
 	//initialize game with two players
@@ -69,5 +72,22 @@ public:
 	void DFS(int row, int col, char color, std::vector<std::vector<bool>>& visited) const; // Utility function for DFS traversal
 	bool isSafe(int row, int col, char color, std::vector<std::vector<bool>>& visited) const; // Check if a cell can be included in DFS
 
+
+	int getPlayer1Score() {
+		return player1Score;
+	}
+
+	int getPlayer2Score() {
+		return player2Score;
+	}
+
+	Player* getRoundWinner() const {
+		return winner;
+	}
+
+	void startGameWithoutCoinToss();
+	void setStartingPlayer(Player* startingPlayer);
 };
+
+
 #endif // !GAME_H

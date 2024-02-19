@@ -8,6 +8,7 @@
 #include "HumanPlayer.h"
 #include "ComputerPlayer.h"
 #include "Round.h"
+#include "Tournament.h"
 using namespace std;
 
 int main() {
@@ -22,8 +23,11 @@ int main() {
 
    /* Game game(&humanPlayer, &computerPlayer);
     game.startGame();*/
-    Round game(&humanPlayer, &computerPlayer);
-    game.startGame();
+    /*Round game(&humanPlayer, &computerPlayer);
+    game.startGame();*/
+
+    Tournament tourney(&humanPlayer, &computerPlayer);
+    tourney.playNextRound();
     //game.coinToss();
     //game.playerTurn();
     /* OLD APPROACH */
