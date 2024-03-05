@@ -9,6 +9,7 @@
 #include "ComputerPlayer.h"
 #include "Round.h"
 #include "Tournament.h"
+#include "Serialization.h"
 using namespace std;
 
 int main() {
@@ -21,13 +22,27 @@ int main() {
     HumanPlayer humanPlayer("Kevin");
     ComputerPlayer computerPlayer("AI");
 
-   /* Game game(&humanPlayer, &computerPlayer);
-    game.startGame();*/
-    /*Round game(&humanPlayer, &computerPlayer);
-    game.startGame();*/
+   /* game game(&humanplayer, &computerplayer);
+    game.startgame();
+    round game(&humanplayer, &computerplayer);
+    game.startgame(); */
 
     Tournament tourney(&humanPlayer, &computerPlayer);
     tourney.playNextRound();
+    bool isPlayer1Turn;
+
+    //cout << "Do you want to load a saved game? (yes/no): ";
+    //string choice;
+    //cin >> choice;
+
+    //if (choice == "yes") {
+    //    if (Serialization::loadGameState(gameBoard, humanPlayer, computerPlayer, isPlayer1Turn)) {
+    //        cout << "Game loaded successfully.\n";
+    //        // Optionally, show the loaded board state and current turn
+    //        cout << "LOADED BOARD STATE:\n";
+    //        gameBoard.showBoard();
+        //}
+    //}
     //game.coinToss();
     //game.playerTurn();
     /* OLD APPROACH */

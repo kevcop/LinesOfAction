@@ -5,6 +5,7 @@
 #include "board.h"
 #include "Round.h"
 #include "Tournament.h"
+#include "Serialization.h"
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
@@ -155,7 +156,13 @@ void Round::playerTurn() {
         cout << "Invalid move. Please try again." << endl;
         return; // dont want to switch turns if invalid move
     }
-
+    /*cout << "Do you want to save the game? (yes/no): ";
+    string input;
+    cin >> input;
+    if (input == "yes") {
+        Serialization::saveGameState(gameBoard, *player1, *player2, isPlayer1Turn, player1Score, player2Score);
+        cout << "Game saved successfully.\n";
+    }*/
     switchTurn(); //next player's turn
 }
 
@@ -261,15 +268,20 @@ int Round::translateColumn(char columnLetter) {
 //    // Additional end-of-game logic could be placed here if needed
 //}
 
-void Round::startGame() {
-    // Initial setup, such as deciding who goes first
-    coinToss(); // This method decides who starts and sets `currentPlayer` accordingly
+void Round::startGame(Player* startingPlayer = nullptr) {
+    if (startingPlayer != nullptr) {
+        currentPlayer = startingPlayer;
+    }
+    else {
+        coinToss();
+    }
+    //coinToss(); // 
 
     // Main game loop
     bool gameOver = false;
     while (!gameOver) {
         gameBoard.showBoard(); // Display the board at the start of each turn
-        playerTurn(); // Conduct the current player's turn
+        playerTurn(); // the current player's turn
 
         // Check if all pieces of one color are connected after each turn
         bool blackConnected = checkConnectedGroup('B');
@@ -282,48 +294,40 @@ void Round::startGame() {
 
             gameOver = true; // Mark the game as over
             cout << "Round over!" << endl;
-            // Here, you might want to prompt for another round or end the game session
         }
-        // No need to switch turns here, as it's already handled at the end of playerTurn()
     }
 
     gameBoard.showBoard();
     cout << "Game over!" << endl;
-    // Additional end-of-game logic could be placed here if needed
 }
 
 
-    // Game has ended, display final board state and any concluding messages
 
 
 void Round::updateScores() {
-    auto [blackCount, whiteCount] = gameBoard.countPiecesByColor();
+    auto [blackCount, whiteCount] = gameBoard.countPiecesByColor(); //COUNT PIECES
 
-    // Assuming player1 is always black and player2 is white for this example
-    int piecesPlayer1 = (player1->getPieceType() == 'B') ? blackCount : whiteCount;
+
+    int piecesPlayer1 = (player1->getPieceType() == 'B') ? blackCount : whiteCount; //get pieces
     int piecesPlayer2 = (player2->getPieceType() == 'B') ? blackCount : whiteCount;
 
     // Update scores based on the difference in the number of pieces
-    player1Score += piecesPlayer1 - piecesPlayer2;
+    player1Score += piecesPlayer1 - piecesPlayer2; 
     player2Score += piecesPlayer2 - piecesPlayer1;
 }
 
 int Round::calculateScore() const {
-    auto [blackCount, whiteCount] = gameBoard.countPiecesByColor();
+    auto [blackCount, whiteCount] = gameBoard.countPiecesByColor(); //COUNT PIECES
 
     // Example calculation - adjust based on your scoring logic
-    int piecesPlayer1 = (player1->getPieceType() == 'B') ? blackCount : whiteCount;
-    int piecesPlayer2 = (player2->getPieceType() == 'B') ? blackCount : whiteCount;
+    int piecesPlayer1 = (player1->getPieceType() == 'B') ? blackCount : whiteCount; //get pieces
+    int piecesPlayer2 = (player2->getPieceType() == 'B') ? blackCount : whiteCount; //get pieces
 
-    return piecesPlayer1 - piecesPlayer2;
+    return piecesPlayer1 - piecesPlayer2; //score calc
 }
 
 bool Round::checkRoundOver() const {
-    // Placeholder logic - adjust according to when you consider a round to be over
-    // For example, check if all pieces of a player are connected or if a player has no moves left
-    // NOTE: You'll need to implement logic to check for game over conditions, such as all pieces connected.
-    // This is a placeholder and the actual implementation may vary.
-   // return gameBoard.isGameOver(); // Assuming Board has an isGameOver method to check the condition
+  //place holder
     return false;
 }
 
@@ -355,33 +359,10 @@ void Round::determineWinner() {
     // Update scores after determining the winner
     updateScores();
 }
-//void Round::determineWinner() {
-//    auto [blackCount, whiteCount] = gameBoard.countPiecesByColor();
-//
-//    // Assuming player1 is always black and player2 is white for simplicity in this example
-//    int piecesPlayer1 = (player1->getPieceType() == 'B') ? blackCount : whiteCount;
-//    int piecesPlayer2 = (player2->getPieceType() == 'B') ? blackCount : whiteCount;
-//
-//    if (piecesPlayer1 > piecesPlayer2) {
-//        std::cout << player1->getName() << " wins this round!" << std::endl;
-//        winner = player1;
-//    }
-//    else if (piecesPlayer2 > piecesPlayer1) {
-//        std::cout << player2->getName() << " wins this round!" << std::endl;
-//        winner = player2;
-//    }
-//    else {
-//        std::cout << "This round is a draw." << std::endl;
-//        winner = nullptr; // No winner in case of a draw
-//    }
-//
-//    // Update scores after determining the winner
-//    updateScores();
-//}
+
 
 //ALGO APPROACH
 
-// Constructor and other methods of Round class...
 
 // Check if all pieces of one color are connected
 bool Round::checkConnectedGroup(char color) const {
@@ -437,10 +418,8 @@ bool Round::isSafe(int row, int col, char color, std::vector<std::vector<bool>>&
     return (row >= 0) && (row < 8) && (col >= 0) && (col < 8) &&
         (gameBoard.getPieceAt(row, col) == color) && !visited[row][col];
 }
-
+//EXPERIMENTAL
 void Round::startGameWithoutCoinToss() {
-    // Assume currentPlayer has already been set based on the outcome of the previous round
-    // or another rule specific to your game's tournament structure.
 
     // Main game loop remains the same as in startGame
     bool gameOver = false;
@@ -448,31 +427,22 @@ void Round::startGameWithoutCoinToss() {
         gameBoard.showBoard(); // Display the board at the start of each turn
         playerTurn(); // Conduct the current player's turn
 
-        // Here, we include the same logic to check if the round is over
-        // and to determine the winner, as in your original startGame method.
         if (checkRoundOver()) {
             determineWinner(); // Determine and announce the winner
             updateScores(); // Update the scores based on this round's outcome
             gameOver = true; // Mark the game as over
         }
-        // The turn switch is handled at the end of playerTurn()
     }
 
     gameBoard.showBoard();
     std::cout << "Game over!" << std::endl;
-    // Additional end-of-game logic could be placed here if needed
 }
-#include "Round.h"
 
-// Constructor and other Round methods...
 
 void Round::setStartingPlayer(Player* startingPlayer) {
     currentPlayer = startingPlayer;
     // Determine if it is player 1's turn based on the starting player
     isPlayer1Turn = (currentPlayer == player1);
 
-    // Optionally, adjust game setup based on the starting player
-    // For example, if you have game state that depends on who starts
 }
 
-// Rest of the Round class definition...

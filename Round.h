@@ -58,7 +58,7 @@ public:
 	//used for proper column identifying 
 	int translateColumn(char columnLetter);
 	//method for handling run of game
-	void startGame();
+	void startGame(Player *startingPlayer);
 
 
 	//NEW FEATURES

@@ -8,6 +8,7 @@ private:
     std::vector<int> scores; // Assuming two players, index 0 for player1 and index 1 for player2
     Player* player1;
     Player* player2;
+    Player* startingPlayer = nullptr;
 
 public:
     Tournament(Player* p1, Player* p2);

@@ -12,6 +12,8 @@ protected:
     std::pair<char, int> destination; // desired move spot
     char pieceType; // B or W
     bool wonLastRound = false;
+    int roundsWon = 0;
+    int score = 0;
 
 public:
     Player() = default; // default cons
@@ -44,6 +46,21 @@ public:
     }
     bool getWonLastRound() {
         return wonLastRound;
+    }
+
+    void setRoundsWon(int newRoundsWon) {
+        roundsWon = newRoundsWon;
+    }
+    void setScore(int newScore) {
+        score = newScore;
+    }
+
+    int getRoundsWon() const {
+        return roundsWon;
+    }
+
+    int getScore() const {
+        return score;
     }
 };
 

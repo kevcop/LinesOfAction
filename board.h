@@ -21,5 +21,8 @@ public:
     bool isPositionValid(int row, int col) const; //determine if location is within bounds
     void removePiece(int row, int col);
     pair<int, int> countPiecesByColor() const;
+
+    void setPieceAt(int row, int col, char pieceType);
+
 };
 #endif

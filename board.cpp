@@ -106,3 +106,10 @@ std::pair<int, int> Board::countPiecesByColor() const {
 
     return std::make_pair(blackCount, whiteCount);
 }
+
+
+void Board::setPieceAt(int row, int col, char pieceType) {
+    if (isPositionValid(row, col)) {
+        board[row][col] = pieceType;
+    }
+}

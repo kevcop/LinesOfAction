@@ -11,12 +11,12 @@ void Tournament::playNextRound() {
     std::cout << "Starting round " << currentRoundNumber << std::endl;
 
     Round round(player1, player2);
-    round.startGame();
+    round.startGame(startingPlayer);
 
     // Determine the round's winner and calculate the score based on the new logic
     Player* roundWinner = round.getRoundWinner();
     int scoreDifference = round.calculateScore(); // Adjust this method to return the difference in pieces
-
+    startingPlayer = roundWinner;
     if (roundWinner == player1) {
         scores[0] += scoreDifference; // Player 1 wins and scores are updated accordingly
         std::cout << player1->getName() << " wins the round with " << scoreDifference << " points!" << std::endl;

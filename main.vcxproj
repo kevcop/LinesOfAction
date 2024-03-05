@@ -136,6 +136,7 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Round.cpp" />
     <ClCompile Include="Rules.cpp" />
+    <ClCompile Include="Serialization.cpp" />
     <ClCompile Include="Tournament.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -146,6 +147,7 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="Round.h" />
     <ClInclude Include="Rules.h" />
+    <ClInclude Include="Serialization.h" />
     <ClInclude Include="Tournament.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
