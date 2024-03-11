@@ -7,23 +7,24 @@
 #include <iostream>
 #include <utility>
 #include "Rules.h"
-#include "Tournament.h"
-
+//#include "Tournament.h"
+#include "Serialization.h"
+#include <memory>
 using namespace std;
-
+class Tournament;
 class Round {
 private:
 	//pointers to the players
-	Player* player1;
-	Player* player2;
-	Player* currentPlayer;
+	shared_ptr<Player> player1;
+	shared_ptr<Player> player2;
+	shared_ptr<Player> currentPlayer;
 
 
 	Board gameBoard; //board 
 	bool isPlayer1Turn; //player turns
 	int player1Score;
 	int player2Score;
-	Player* winner;
+	shared_ptr<Player> winner;
 	pair <char, int> destination; //location
 	Rules rules; //object of rules class to validate
 
@@ -31,8 +32,10 @@ private:
 
 public:
 	//initialize game with two players
-	Round(Player* p1, Player* p2);
-
+	Round(shared_ptr<Player> p1, shared_ptr<Player> p2);
+	const Board& getGameBoard() const { return gameBoard; }
+	std::shared_ptr<Player> getPlayer1() const { return player1; }
+	std::shared_ptr<Player> getPlayer2() const { return player2; }
 	//void setPlayerNames(const string& player1Name, const string& player2Name);
 	void coinToss(); //determine who goes first
 	//switch player turn
@@ -58,7 +61,7 @@ public:
 	//used for proper column identifying 
 	int translateColumn(char columnLetter);
 	//method for handling run of game
-	void startGame(Player *startingPlayer);
+	void startGame(shared_ptr<Player> startingPlayer);
 
 
 	//NEW FEATURES
@@ -80,13 +83,32 @@ public:
 	int getPlayer2Score() {
 		return player2Score;
 	}
-
-	Player* getRoundWinner() const {
+	shared_ptr<Player> getRoundWinner() const;
+	/*Player* getRoundWinner() const {
 		return winner;
-	}
+	}*/
 
 	void startGameWithoutCoinToss();
-	void setStartingPlayer(Player* startingPlayer);
+	void setStartingPlayer(shared_ptr<Player> startingPlayer);
+	std::shared_ptr<Player> getCurrentPlayer() const {
+		return currentPlayer;
+	}
+	void setBoardState(const Board& loadedBoard);
+	//const Board& getGameBoard() const { return gameBoard; }
+
+	void updatePlayerPieceTypes(char humanPieceType, char computerPieceType);
+	void continueRound();
+
+	void continueGameFromSavedState();
+
+	void continueHumanPlayerTurn();
+	// Logic to prompt the human player for their move, specifically tailored for resuming the game.
+	// Similar to the existing playerTurn logic but possibly streamlined for continuation
+
+	void continueComputerTurn();
+	// Logic for the computer player to make its move, similar to the existing playerTurn logic.
+	// This might involve selecting from generated moves, etc.
+
 };
 
 

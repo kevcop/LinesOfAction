@@ -9,7 +9,7 @@
 class Rules {
 public:
     //determine if move is valid
-    static bool isValidMove(Board& board, const Player& player, int startRow, int startCol, int endRow, int endCol);
+    static bool isValidMove( Board& board, const Player& player, int startRow, int startCol, int endRow, int endCol);
     //determine amount of space moves
     //static int countPiecesInLine(const Board& board, int row, int col, char direction);
     //not yet implemented but capturing logic
@@ -45,6 +45,8 @@ public:
 
     static bool isPathClear(const Board& board, int startRow, int startCol, int endRow, int endCol, char playerPieceType, vector<pair<int, int>>& capturePositions);
     static void processCaptures(Board& board, const vector<pair<int, int>>& captures);
+    static int countPiecesInLineIncludingDestination(const Board& board, int startRow, int startCol, int endRow, int endCol, char playerPieceType);
+
 
 private:
     static std::pair<int, int> directionOffsets(char direction); //diagonal logic

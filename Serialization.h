@@ -1,19 +1,57 @@
+/************************************************************
+ * Name:  Kevin Chicas                                      *
+ * Project:  Lines of Action - P1                           *
+ * Class:  CMPS 369 - OPL                                   *
+ * Date:  03/13/2024                                        *
+ ************************************************************/
 #ifndef SERIALIZATION_H
 #define SERIALIZATION_H
 
+#include <fstream>
+#include <memory>
+#include <string>
 #include "Board.h"
 #include "Player.h"
 #include "HumanPlayer.h"
-#include "ComputerPlayer.h"
-// Include other necessary headers
+ // Forward declarations to avoid circular dependencies.
+class Round;
+class ComputerPlayer;
 
+/**
+ * @class Serialization
+ * @brief Handles saving and loading of game state.
+ *
+ * Provides static methods to serialize (save) and deserialize (load)
+ * the current state of the game to and from a file.
+ */
 class Serialization {
 public:
-    static void saveGameState(const Board& board, const Player& player1, const Player& player2, bool isPlayer1Turn, int player1Score, int player2Score);
-    static bool loadGameState(Board& board, HumanPlayer& humanPlayer, ComputerPlayer& computerPlayer, bool& isPlayer1Turn);
+    /**
+     * @brief Saves the current state of the game.
+     * @param round The current round of the game to be saved.
+     */
+    static void saveGameState(const Round& round);
+
+    /**
+     * @brief Extracts an integer value from a given line of text.
+     * @param line The string line containing the value.
+     * @return The extracted integer value.
+     */
     static int extractValue(const std::string& line);
 
-    //static bool loadGameState(Board& board, Player& player1, Player& player2, bool& isPlayer1Turn);
+    /**
+     * @brief Processes player data from an input file stream.
+     * @param inFile The input file stream to read from.
+     * @param player The player object to load data into.
+     */
+    static void processPlayerData(std::ifstream& inFile, std::shared_ptr<Player> player);
+
+    /**
+     * @brief Loads the game state from a file.
+     * @param filename The name of the file to load the game state from.
+     * @return A unique pointer to the loaded Round object, or nullptr if loading fails.
+     */
+    static std::unique_ptr<Round> loadGameState(const std::string& filename);
+};
 
 #endif // SERIALIZATION_H
-};
