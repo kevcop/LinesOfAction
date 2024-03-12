@@ -34,8 +34,8 @@ public:
 	//initialize game with two players
 	Round(shared_ptr<Player> p1, shared_ptr<Player> p2);
 	const Board& getGameBoard() const { return gameBoard; }
-	std::shared_ptr<Player> getPlayer1() const { return player1; }
-	std::shared_ptr<Player> getPlayer2() const { return player2; }
+	shared_ptr<Player> getPlayer1() const { return player1; }
+	shared_ptr<Player> getPlayer2() const { return player2; }
 	//void setPlayerNames(const string& player1Name, const string& player2Name);
 	void coinToss(); //determine who goes first
 	//switch player turn
@@ -72,8 +72,8 @@ public:
 	void determineWinner(); // Determine the winner of the round and update scores
 
 	bool checkConnectedGroup(char color) const; // New function to check if all pieces of one color are connected
-	void DFS(int row, int col, char color, std::vector<std::vector<bool>>& visited) const; // Utility function for DFS traversal
-	bool isSafe(int row, int col, char color, std::vector<std::vector<bool>>& visited) const; // Check if a cell can be included in DFS
+	void DFS(int row, int col, char color, vector<vector<bool>>& visited) const; // Utility function for DFS traversal
+	bool isSafe(int row, int col, char color, vector<vector<bool>>& visited) const; // Check if a cell can be included in DFS
 
 
 	int getPlayer1Score() {
@@ -90,7 +90,7 @@ public:
 
 	void startGameWithoutCoinToss();
 	void setStartingPlayer(shared_ptr<Player> startingPlayer);
-	std::shared_ptr<Player> getCurrentPlayer() const {
+	shared_ptr<Player> getCurrentPlayer() const {
 		return currentPlayer;
 	}
 	void setBoardState(const Board& loadedBoard);

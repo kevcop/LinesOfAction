@@ -23,9 +23,9 @@ protected:
     // used for storing name of player
     string playerName;
     //used as initial piece selected for making a move
-    std::pair<char, int> piece;
+    pair<char, int> piece;
     //used for storing desired destination for move 
-    std::pair<char, int> destination; 
+    pair<char, int> destination; 
     //used for keeping track of type of piece 
     char pieceType;
     ///< Indicates whether the player won the last round.
@@ -45,7 +45,7 @@ public:
      * @brief Constructs a Player with a given name.
      * @param name The name of the player.
      */
-    explicit Player(const std::string& name) : playerName(name) {}
+    explicit Player(const string& name) : playerName(name) {}
 
     /**
      * @brief Virtual destructor for the Player class.
@@ -88,7 +88,7 @@ public:
      * @param position The board position to convert.
      * @return A string representing the position in chess notation (e.g., A6).
      */
-    virtual string properNotation(std::pair<int, int> position) const = 0;
+    virtual string properNotation(pair<int, int> position) const = 0;
 
     /**
      * @brief Retrieves the player's name.

@@ -37,21 +37,21 @@ public:
      * @param line The string line containing the value.
      * @return The extracted integer value.
      */
-    static int extractValue(const std::string& line);
+    static int extractValue(const string& line);
 
     /**
      * @brief Processes player data from an input file stream.
      * @param inFile The input file stream to read from.
      * @param player The player object to load data into.
      */
-    static void processPlayerData(std::ifstream& inFile, std::shared_ptr<Player> player);
+    static void processPlayerData(ifstream& inFile, shared_ptr<Player> player);
 
     /**
      * @brief Loads the game state from a file.
      * @param filename The name of the file to load the game state from.
      * @return A unique pointer to the loaded Round object, or nullptr if loading fails.
      */
-    static std::unique_ptr<Round> loadGameState(const std::string& filename);
+    static unique_ptr<Round> loadGameState(const string& filename);
 };
 
 #endif // SERIALIZATION_H

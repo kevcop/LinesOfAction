@@ -4,59 +4,65 @@
 #include <vector>
 #include <utility>
 using namespace std;
-//looking for a valid path
-// 
-// WORKING,ORIGINAL VERSION
-//bool Rules::isPathClear(const Board& board, int startRow, int startCol, int endRow, int endCol, char playerPieceType, vector<pair<int, int>>& capturePositions) {
-//    int dRow = (endRow - startRow != 0) ? (endRow - startRow) / abs(endRow - startRow) : 0;
-//    int dCol = (endCol - startCol != 0) ? (endCol - startCol) / abs(endCol - startCol) : 0;
-//
-//    int currentRow = startRow + dRow;
-//    int currentCol = startCol + dCol;
-//
-//    while (currentRow != endRow || currentCol != endCol) {
-//        char pieceAtCurrent = board.getPieceAt(currentRow, currentCol);
-//        char pieceAtDestination = board.getPieceAt(endRow, endCol);
-//        if (pieceAtCurrent != '.' && pieceAtCurrent != playerPieceType) {
-//            // Potential capture detected, add to capturePositions
-//            capturePositions.push_back(std::make_pair(currentRow, currentCol));
-//            // Continue checking the path in case of multiple captures
-//        }
-//        else if (pieceAtDestination == playerPieceType) {
-//            // Path blocked by player's own piece
-//            return false;
-//        }
-//        currentRow += dRow;
-//        currentCol += dCol;
-//    }
-//
-//    // Final position check for capturing
-//    char pieceAtDestination = board.getPieceAt(endRow, endCol);
-//    if (pieceAtDestination != '.' && pieceAtDestination != playerPieceType) {
-//        // Potential capture at the destination
-//        capturePositions.push_back(std::make_pair(endRow, endCol));
-//    }
-//    else if (pieceAtDestination == playerPieceType) {
-//        // Destination blocked by player's own piece
-//        return false;
-//    }
-//
-//    return true; // Path is clear, captures are recorded
-//}
+/**
+ * Function Name: isPathClear
+ * Purpose: Checks if the path between the start and end positions is clear of other pieces.
+ * Parameters:
+ *     board, a constant reference to a Board object representing the game board.
+ *     startRow, startCol, endRow, endCol, integers representing the start and end positions.
+ *     playerPieceType, a char representing the player's piece type.
+ *     capturePositions, a reference to a vector of pair<int, int> for capturing opponent pieces.
+ * Return Value: A boolean value indicating if the path is clear.
+ * Algorithm:
+ *     1. Calculate the direction of movement in rows and columns.
+ *     2. Iterate from the start position towards the end position.
+ *     3. Check if any piece other than the player's own blocks the path.
+ *     4. Record valid capture positions if encountered.
+ * Reference: Chatgpt
+ */
 
 bool Rules::isPathClear(const Board& board, int startRow, int startCol, int endRow, int endCol, char playerPieceType, vector<pair<int, int>>& capturePositions) {
+    //determine movement direction
+    // Determine the vertical direction of movement between the start and end positions.
+// dRow is calculated as the difference between endRow and startRow, normalized to -1, 0, or 1.
+// -1 indicates an upward movement on the board (towards lower row indices),
+// 1 indicates a downward movement (towards higher row indices),
+// and 0 indicates that the movement is purely horizontal (no change in row).
+// The normalization is done by dividing the difference by its absolute value,
+// ensuring that dRow captures only the direction, not the magnitude of the movement.
+// The conditional check (endRow - startRow != 0) ensures division by zero is avoided,
+// defaulting dRow to 0 when there's no vertical movement.
     int dRow = (endRow - startRow != 0) ? (endRow - startRow) / abs(endRow - startRow) : 0;
+    // Determine the horizontal direction of movement between the start and end positions.
+// dCol works similarly to dRow but for the horizontal axis.
+// -1 indicates a leftward movement on the board (towards lower column indices),
+// 1 indicates a rightward movement (towards higher column indices),
+// and 0 indicates that the movement is purely vertical (no change in column).
+// This calculation follows the same logic as dRow, standardizing the direction
+// to -1, 0, or 1 based on whether the movement is to the left, none, or to the right,
+// respectively, and avoids division by zero by checking if the difference is non-zero first.
     int dCol = (endCol - startCol != 0) ? (endCol - startCol) / abs(endCol - startCol) : 0;
-
+    // `currentRow` is derived by adding `dRow` to `startRow`. `dRow` indicates the vertical
+// direction of the movement (upward as -1, downward as 1, or stationary as 0).
+// Therefore, `currentRow` is the next row position in the direction of the movement.
+// This variable is crucial for stepwise traversal or checks along the path from the
+// starting position to the destination, enabling iterative or recursive logic
+// to move or check each step in the specified direction.
     int currentRow = startRow + dRow;
+    // Similarly, `currentCol` is calculated by adding `dCol` to `startCol`, where `dCol`
+// indicates the horizontal direction of the movement (leftward as -1, rightward as 1,
+// or stationary as 0). Thus, `currentCol` identifies the next column position to
+// consider in the movement's direction.
+// Like `currentRow`, this variable allows for a systematic approach to navigate or
+// evaluate each column step in the movement from the starting point towards the end.
     int currentCol = startCol + dCol;
     char pieceAtDestination = board.getPieceAt(endRow, endCol);
 
-    // Adjusted logic to check path clearance
+    //check each position along on the path
     while (currentRow != endRow || currentCol != endCol) {
         char pieceAtCurrent = board.getPieceAt(currentRow, currentCol);
         if (pieceAtCurrent != '.' && pieceAtCurrent != playerPieceType) {
-            // Path is blocked by an opponent's piece before the destination
+            // Path is blocked
             return false;
         }
         currentRow += dRow;
@@ -73,212 +79,126 @@ bool Rules::isPathClear(const Board& board, int startRow, int startCol, int endR
         // Destination blocked by player's own piece
         return false;
     }
-
-    return true; // Path is clear if no conditions above are met
+    //path is clear
+    return true; 
 }
-
-
-
+/**
+ * Function Name: checkWinCondition
+ * Purpose: Determines if a win condition has been met.
+ * Parameters:
+ *     board, a constant reference to a Board object representing the game board.
+ *     player, a constant reference to a Player object representing the player.
+ * Return Value: A boolean value indicating if the player has won.
+ * Algorithm:
+ *     1. Placeholder function for win condition checking.
+ * Reference: None
+ */
 bool Rules::checkWinCondition(const Board& board, const Player& player) {
     return false; 
 }
-
-
-//check for valid ending spot
+/**
+ * Function Name: isValidEndingPosition
+ * Purpose: Checks if the ending position of a move is valid.
+ * Parameters:
+ *     board, a constant reference to a Board object representing the game board.
+ *     endRow, endCol, integers representing the end position.
+ *     pieceType, a char representing the player's piece type.
+ * Return Value: A boolean value indicating if the ending position is valid.
+ * Algorithm:
+ *     1. Check if the ending position is empty or can be captured.
+ * Reference: None
+ */
 bool Rules::isValidEndingPosition(const Board& board, int endRow, int endCol, char pieceType) {
-    char endPosPiece = board.getPieceAt(endRow, endCol); // Assuming Board has a method getPieceAt to get the piece at a given position
-
+    //get the piece at the end position
+    char endPosPiece = board.getPieceAt(endRow, endCol);
     if (endPosPiece == '.') {
         //The ending position is empty
         return true;
     }
+    // if the position holds opponent piece, capture is possible
     else if (endPosPiece != pieceType) {
-        return true; // capturing???
+        return true; 
     }
+    //indicates move is not valid
     return false;
 }
-//determine if move is valid based off rules
 
-//WORKING VERSION, ORIGINAL
-//bool Rules::isValidMove( Board& board, const Player& player, int startRow, int startCol, int endRow, int endCol) { //REMOVED CONST
-//
-//    // Ensure there's a piece at the start position that belongs to the player
-//        char pieceAtStart = board.getPieceAt(startRow, startCol);
-//    if (pieceAtStart == '.' || pieceAtStart != player.getPieceType()) {
-//        return false; // No piece to move or piece does not belong to player
-//    }
-//
-//    char pieceAtDestination = board.getPieceAt(endRow, endCol);
-//    if (pieceAtDestination == player.getPieceType())
-//    {
-//        return false;
-//    }
-//    vector<pair<int, int>> tempCaptures;
-//    // Ensure start and end positions are within the board
-//    if (!board.isPositionValid(startRow, startCol) || !board.isPositionValid(endRow, endCol)) {
-//        return false;
-//    }
-//
-//    // Ensure the move is in a straight line: horizontally, vertically, or diagonally
-//    bool isStraightLine = (startRow == endRow) || (startCol == endCol) || (abs(startRow - endRow) == abs(startCol - endCol));
-//    if (!isStraightLine) {
-//        return false;
-//    }
-//
-//    // Ensure the path between start and end positions is clear
-//    if (!isPathClear(board, startRow, startCol, endRow, endCol, player.getPieceType(),tempCaptures)) {
-//        return false;
-//    }
-//
-//    //processCaptures(board, tempCaptures);
-//
-//    // Determine the number of pieces in line with the move
-//    int piecesInLine = 0;
-//    if (startRow == endRow) {
-//        // Horizontal move
-//        piecesInLine = countPiecesInLine(board, startRow, startCol, 'H');
-//    }
-//    else if (startCol == endCol) {
-//        // Vertical move
-//        piecesInLine = countPiecesInLine(board, startRow, startCol, 'V');
-//    }
-//    else if (abs(startRow - endRow) == abs(startCol - endCol)) {
-//        char direction = determineDiagonalDirection(startRow, startCol, endRow, endCol);
-//        // Diagonal move
-//        piecesInLine = countDiagonalPieces(board,startRow,startCol,direction);
-//
-//         //piecesInLine = countPiecesInLine(board, startRow,startCol, 'D');
-//        //piecesInLine++;
-//    }
-//
-//    // Calculate the move distance
-//    int moveDistance = max(abs(startRow - endRow), abs(startCol - endCol));
-//    // Validate the move distance against the number of pieces in line
-//    if (moveDistance != piecesInLine) {
-//        return false;
-//    }
-//    if (!isValidEndingPosition(board, endRow, endCol, player.getPieceType())) {
-//        return false;
-//    }
-//
-//    // Since all checks have passed, now we can process captures
-//    //processCaptures(board, tempCaptures);
-//
-//    return true;
-//    // Ensure the ending position is valid for the move
-//    //return isValidEndingPosition(board, endRow, endCol, player.getPieceType());
-//}
-
-
-/* LATEST WORKING 03/10/2024 */
-//bool Rules::isValidMove(Board& board, const Player& player, int startRow, int startCol, int endRow, int endCol) {
-//    char pieceAtStart = board.getPieceAt(startRow, startCol);
-//    if (pieceAtStart == '.' || pieceAtStart != player.getPieceType()) {
-//        return false; // No piece to move or piece does not belong to player
-//    }
-//
-//    // Check if the move is within board bounds and in a straight line
-//    if (!board.isPositionValid(startRow, startCol) || !board.isPositionValid(endRow, endCol)) {
-//        return false;
-//    }
-//
-//    bool isStraightLine = (startRow == endRow) || (startCol == endCol) || (std::abs(startRow - endRow) == std::abs(startCol - endCol));
-//    if (!isStraightLine) {
-//        return false;
-//    }
-//
-//    // Ensure the path between start and end positions is clear
-//    std::vector<std::pair<int, int>> tempCaptures;
-//    if (!isPathClear(board, startRow, startCol, endRow, endCol, player.getPieceType(), tempCaptures)) {
-//        return false;
-//    }
-//
-//    int piecesInLine;
-//    if (startRow == endRow) {
-//        // Horizontal move
-//        piecesInLine = countPiecesInLine(board, startRow, startCol, 'H');
-//    }
-//    else if (startCol == endCol) {
-//        // Vertical move
-//        piecesInLine = countPiecesInLine(board, startRow, startCol, 'V');
-//    }
-//    else {
-//        // Diagonal move, use diagonal direction to determine pieces in line
-//        char direction = determineDiagonalDirection(startRow, startCol, endRow, endCol);
-//        piecesInLine = countDiagonalPieces(board, startRow, startCol, direction);
-//    }
-//
-//    int moveDistance = std::max(std::abs(startRow - endRow), std::abs(startCol - endCol));
-//    if (moveDistance != piecesInLine) {
-//        //std::cout << "Invalid move: Move distance does not match the total pieces in line." << std::endl;
-//        return false;
-//    }
-//    // Adjust condition for capturing or non-capturing moves
-//    char pieceAtDestination = board.getPieceAt(endRow, endCol);
-//    if ((pieceAtDestination != '.' && pieceAtDestination != player.getPieceType() && moveDistance > piecesInLine) ||
-//        (pieceAtDestination == '.' && moveDistance != piecesInLine)) {
-//        return false;
-//    }
-//
-//    return isValidEndingPosition(board, endRow, endCol, player.getPieceType());
-//}
-
+/**
+ * Function Name: isValidMove
+ * Purpose: Determines if a move is valid according to the game rules.
+ * Parameters:
+ *     board, a reference to a Board object representing the game board.
+ *     player, a constant reference to a Player object representing the player making the move.
+ *     startRow, startCol, endRow, endCol, integers representing the start and end positions of the move.
+ * Return Value: A boolean value indicating if the move is valid.
+ * Algorithm:
+ *     1. Check if the starting piece belongs to the player and the move is within board bounds.
+ *     2. Verify the move is in a straight line and the path is clear.
+ *     3. Count pieces in line and compare to the move distance.
+ * Reference: None
+ */
 bool Rules::isValidMove(Board& board, const Player& player, int startRow, int startCol, int endRow, int endCol) {
+    //get the piece that is at the starting position
     char pieceAtStart = board.getPieceAt(startRow, startCol);
-    std::cout << "Debug: Piece at start [" << startRow << "," << startCol << "] is '" << pieceAtStart << "'." << std::endl;
-    std::cout << "Debug: Player's piece type is '" << player.getPieceType() << "'." << std::endl;
+
+    //cout << "Debug: Piece at start [" << startRow << "," << startCol << "] is '" << pieceAtStart << "'." << endl;
+    //cout << "Debug: Player's piece type is '" << player.getPieceType() << "'." << endl;
+    //verify piece belongs to player and move is within bounds
     if (pieceAtStart == '.' || toupper(pieceAtStart) != toupper(player.getPieceType())) {
-        std::cout << "Debug: No piece to move or piece does not belong to player." << std::endl;
-        return false; // No piece to move or piece does not belong to player
+        cout << "Debug: No piece to move or piece does not belong to player." << endl;
+        return false; 
     }
 
     // Check if the move is within board bounds and in a straight line
     if (!board.isPositionValid(startRow, startCol) || !board.isPositionValid(endRow, endCol)) {
-        std::cout << "Debug: Move is out of board bounds." << std::endl;
+        //cout << "Debug: Move is out of board bounds." << endl;
         return false;
     }
-
-    bool isStraightLine = (startRow == endRow) || (startCol == endCol) || (std::abs(startRow - endRow) == std::abs(startCol - endCol));
+    //ensuring move is in a straight line
+    bool isStraightLine = (startRow == endRow) || (startCol == endCol) || (abs(startRow - endRow) == abs(startCol - endCol));
     if (!isStraightLine) {
-        std::cout << "Debug: Move is not in a straight line." << std::endl;
+        //cout << "Debug: Move is not in a straight line." << endl;
+        //invalid path
         return false;
     }
 
     // Ensure the path between start and end positions is clear
-    std::vector<std::pair<int, int>> tempCaptures;
+    vector<pair<int, int>> tempCaptures;
     if (!isPathClear(board, startRow, startCol, endRow, endCol, player.getPieceType(), tempCaptures)) {
-        std::cout << "Debug: Path is not clear for the move." << std::endl;
+        //cout << "Debug: Path is not clear for the move." << endl;
         return false;
     }
-
+    //calculating the amount of pieces along the path
     int piecesInLine;
+    //horizontal move checking
     if (startRow == endRow) {
         // Horizontal move
         piecesInLine = countPiecesInLine(board, startRow, startCol, 'H');
     }
+    //vertical move checking
     else if (startCol == endCol) {
         // Vertical move
         piecesInLine = countPiecesInLine(board, startRow, startCol, 'V');
     }
     else {
-        // Diagonal move, use diagonal direction to determine pieces in line
+        //diagonal move pieces in line determination
         char direction = determineDiagonalDirection(startRow, startCol, endRow, endCol);
         piecesInLine = countDiagonalPieces(board, startRow, startCol, direction);
     }
-
-    int moveDistance = std::max(std::abs(startRow - endRow), std::abs(startCol - endCol));
-    std::cout << "Debug: Move Distance: " << moveDistance << ", Pieces in Line: " << piecesInLine << std::endl;
-
+    //attempted distance of move
+    int moveDistance = max(abs(startRow - endRow), abs(startCol - endCol));
+    //cout << "Debug: Move Distance: " << moveDistance << ", Pieces in Line: " << piecesInLine << endl;
+    //checking if desired move distance is equal to the amount of pieces along the line
     if (moveDistance != piecesInLine) {
-        std::cout << "Debug: Invalid move: Move distance does not match the total pieces in line." << std::endl;
+        //cout << "Debug: Invalid move: Move distance does not match the total pieces in line." << endl;
         return false;
     }
 
-    // Adjust condition for capturing or non-capturing moves
+    //checking for potential capturing 
     char pieceAtDestination = board.getPieceAt(endRow, endCol);
     if ((pieceAtDestination != '.' && pieceAtDestination != player.getPieceType() && moveDistance > piecesInLine) ||
         (pieceAtDestination == '.' && moveDistance != piecesInLine)) {
-        std::cout << "Debug: Conditions for capturing or non-capturing moves not met." << std::endl;
+        //cout << "Debug: Conditions for capturing or non-capturing moves not met." << endl;
         return false;
     }
 
@@ -286,78 +206,58 @@ bool Rules::isValidMove(Board& board, const Player& player, int startRow, int st
 }
 
 
-
+/**
+ * Function Name: determineDiagonalDirection
+ * Purpose: Determines the direction of a diagonal move.
+ * Parameters:
+ *     startRow, startCol, endRow, endCol, integers representing the start and end positions of the move.
+ * Return Value: A char representing the direction of the diagonal move.
+ * Algorithm:
+ *     1. Calculate the difference between start and end positions.
+ *     2. Return a character representing the diagonal direction.
+ * Reference: None
+ */
 char Rules::determineDiagonalDirection(int startRow, int startCol, int endRow, int endCol) {
+    //calculating the difference between start and end positions for row and col
     int rowDiff = endRow - startRow;
     int colDiff = endCol - startCol;
-
+    //identify diagonal direction based on the row and col
     if (rowDiff > 0 && colDiff > 0) {
-        std::cout << "Moving Northeast\n";
-        return 'N'; // Northeast
+        cout << "Moving Northeast\n";
+        return 'N'; 
     }
     else if (rowDiff > 0 && colDiff < 0) {
-        std::cout << "Moving Northwest\n";
-        return 'W'; // Northwest
+        cout << "Moving Northwest\n";
+        return 'W'; 
     }
     else if (rowDiff < 0 && colDiff > 0) {
-        std::cout << "Moving Southeast\n";
-        return 'E'; // Southeast
+        cout << "Moving Southeast\n";
+        return 'E'; 
     }
     else if (rowDiff < 0 && colDiff < 0) {
-        std::cout << "Moving Southwest\n";
-        return 'S'; // Southwest
+        cout << "Moving Southwest\n";
+        return 'S'; 
     }
     else {
-        std::cout << "Not a diagonal move\n";
-        return '0'; // Invalid or not diagonal
+        cout << "Not a diagonal move\n";
+        return '0'; 
     }
 }
-
-//int Rules::countDiagonalPieces(const Board& board, int startRow, int startCol, char direction) {
-//    int count = 0; // Start counting from the starting piece
-//    const int SIZE = 8; // Assuming an 8x8 board
-//
-//    // Direction adjustments
-//    int dRow = 0, dCol = 0;
-//    switch (direction) {
-//    case 'N': // Northeast
-//        dRow = 1;
-//        dCol = 1;
-//        break;
-//    case 'W': // Northwest
-//        dRow = 1;
-//        dCol = -1;
-//        break;
-//    case 'E': // Southeast
-//        dRow = -1;
-//        dCol = 1;
-//        break;
-//    case 'S': // Southwest
-//        dRow = -1;
-//        dCol = -1;
-//        break;
-//    default:
-//        // This should not happen if directions are correctly determined
-//        return 0;
-//    }
-//
-//    // Loop to count the pieces in the diagonal path, including the starting position
-//    for (int currentRow = startRow, currentCol = startCol;
-//        currentRow >= 0 && currentRow < SIZE && currentCol >= 0 && currentCol < SIZE;
-//        currentRow += dRow, currentCol += dCol) {
-//        // Check if the current position contains a piece of the player's type
-//        if (board.getPieceAt(currentRow, currentCol) != '.') {
-//            count++;
-//        }
-//    }
-//
-//    return count;
-//}
-
-
-
+/**
+ * Function Name: countDiagonalPieces
+ * Purpose: Counts the pieces on a diagonal line from a given position.
+ * Parameters:
+ *     board, a constant reference to a Board object representing the game board.
+ *     startRow, startCol, integers representing the start position.
+ *     direction, a char representing the direction of the diagonal.
+ * Return Value: An integer representing the total count of pieces on the diagonal.
+ * Algorithm:
+ *     1. Count pieces in both positive and negative directions along the diagonal.
+ * Reference: Chatgpt
+ */
 int Rules::countDiagonalPieces(const Board& board, int startRow, int startCol, char direction) {
-    int totalDiagonalCount = 0; // Initialize total count of pieces on the diagonal
+    //wil be used to count amount of pieces
+    int totalDiagonalCount = 0; 
     const int SIZE = 8;
 
     // Determine the direction increments for row and column based on the specified direction
@@ -378,7 +278,8 @@ int Rules::countDiagonalPieces(const Board& board, int startRow, int startCol, c
             }
         }
         else {
-            break; // Stop counting if out of bounds
+            //stop count if out of bounds
+            break; 
         }
     }
 
@@ -392,67 +293,34 @@ int Rules::countDiagonalPieces(const Board& board, int startRow, int startCol, c
             }
         }
         else {
-            break; // Stop counting if out of bounds
+            //stop count if out of bounds
+            break; 
         }
     }
 
-    // Include the starting piece in the total count
+    //Include the starting piece in the total count
     return totalDiagonalCount + 1;
 }
 
-
-
- //int Rules::countDiagonalPieces(const Board& board, int startRow, int startCol, char direction) {
-
- //     int count = 1; // Include the starting piece
- //   const int SIZE = 8;
-
- //   // Depending on the direction, adjust the row and column changes
- //   int dRow = 0, dCol = 0;
-
- //   switch (direction) {
- //       case 'N': // Northeast
- //           dRow = 1;
- //           dCol = 1;
- //           break;
- //       case 'W': // Northwest
- //           dRow = 1;
- //           dCol = -1;
- //           break;
- //       case 'E': // Southeast
- //           dRow = -1;
- //           dCol = 1;
- //           break;
- //       case 'S': // Southwest
- //           dRow = -1;
- //           dCol = -1;
- //           break;
- //       default:
- //           // Invalid direction, you might want to handle this case.
- //           return 0;
- //   }
-
- //   // Start checking from the next cell in the specified direction
- //   int currentRow = startRow + dRow;
- //   int currentCol = startCol + dCol;
-
- //   // Loop through the diagonal path in the specified direction
- //   while (currentRow >= 0 && currentRow < SIZE && currentCol >= 0 && currentCol < SIZE) {
- //       if (board.getPieceAt(currentRow, currentCol) != '.') {
- //           count++;
- //       }
- //       currentRow += dRow;
- //       currentCol += dCol;
- //   }
-
- //   return count;
- //}
-
+/**
+ * Function Name: countPiecesInLine
+ * Purpose: Counts the pieces in a straight line from a given position.
+ * Parameters:
+ *     board, a constant reference to a Board object representing the game board.
+ *     startRow, startCol, integers representing the start position.
+ *     direction, a char indicating the direction to count ('H' for horizontal, 'V' for vertical).
+ * Return Value: An integer representing the total count of pieces in line.
+ * Algorithm:
+ *     1. Count pieces to the left/up and right/down from the start position.
+ * Reference: None
+ */
  int Rules::countPiecesInLine(const Board& board, int startRow, int startCol, char direction) {
-     int count = 0; // Start counting from 0.
-     const int SIZE = 8; // Assuming an 8x8 board.
+     //used to keep track of count
+     int count = 0; 
+     //size of board
+     const int SIZE = 8; 
 
-     // Count left or up.
+     // Count left side of a horizontal move and up for a vertical move
      for (int d = -1; d >= -SIZE; --d) {
          int currentRow = startRow, currentCol = startCol;
          if (direction == 'H') currentCol += d;
@@ -462,82 +330,35 @@ int Rules::countDiagonalPieces(const Board& board, int startRow, int startCol, c
          if (board.getPieceAt(currentRow, currentCol) != '.') count++;
      }
 
-     // Count right or down (including the starting piece).
+     // Count right side of a horizontal move and down for a vertical move
      for (int d = 0; d < SIZE; ++d) {
          int currentRow = startRow, currentCol = startCol;
          if (direction == 'H') currentCol += d;
          else if (direction == 'V') currentRow += d;
-
+         //break out of loop if current position is out of bounds
          if (currentRow < 0 || currentRow >= SIZE || currentCol < 0 || currentCol >= SIZE) break;
+         //increment count if a piece is found
          if (board.getPieceAt(currentRow, currentCol) != '.') count++;
      }
-     //std::cout << "Total pieces counted in line: " << count << std::endl;
-
+     //cout << "Total pieces counted in line: " << count << endl;
+     //return num of pieces counted
      return count;
  }
-
-
-
-// int Rules::countPiecesInLine(const Board& board, int startRow, int startCol, char direction) {
-//    int count = 1; // Start counting from the initial piece.
-//    const int SIZE = 8; // Assuming an 8x8 board.
-//
-//    int dRow = 0, dCol = 0;
-//    switch (direction) {
-//    case 'H': // Horizontal
-//        dCol = (startCol < 7) ? 1 : -1; // Assuming moving right unless at the rightmost column
-//        break;
-//    case 'V': // Vertical
-//        dRow = (startRow < 7) ? 1 : -1; // Assuming moving down unless at the bottom row
-//        break;
-//        // Diagonal case is handled separately.
-//    }
-//
-//    int currentRow = startRow + dRow;
-//    int currentCol = startCol + dCol;
-//
-//    while (currentRow >= 0 && currentRow < SIZE && currentCol >= 0 && currentCol < SIZE) {
-//        char piece = board.getPieceAt(currentRow, currentCol);
-//        if (piece != '.') count++;
-//        currentRow += dRow;
-//        currentCol += dCol;
-//    }
-//
-//    return count;
-//}
+ /**
+ * Function Name: processCaptures
+ * Purpose: Processes the captures of opponent pieces on the board.
+ * Parameters:
+ *     board, a reference to a Board object where the captures will be processed.
+ *     captures, a constant reference to a vector of pair<int, int> representing the positions of captured pieces.
+ * Return Value: None
+ * Algorithm:
+ *     1. Remove each captured piece from the board.
+ * Reference: None
+ */
  void Rules::processCaptures(Board& board, const vector<pair<int, int>>& captures) {
+     //iterate through captures and remove piece
      for (const auto& pos : captures) {
          board.removePiece(pos.first, pos.second);
      }
- }
-
-
- //NEW
- int Rules::countPiecesInLineIncludingDestination(const Board& board, int startRow, int startCol, int endRow, int endCol, char playerPieceType) {
-     int count = 1; // Start counting from the starting position
-     int rowDirection = (endRow - startRow == 0) ? 0 : ((endRow - startRow) / std::abs(endRow - startRow));
-     int colDirection = (endCol - startCol == 0) ? 0 : ((endCol - startCol) / std::abs(endCol - startCol));
-
-     int currentRow = startRow + rowDirection;
-     int currentCol = startCol + colDirection;
-
-     // Count pieces along the line towards the destination
-     while (currentRow != endRow || currentCol != endCol) {
-         if (board.getPieceAt(currentRow, currentCol) != '.') {
-             count++;
-         }
-         currentRow += rowDirection;
-         currentCol += colDirection;
-     }
-
-     // Check the destination for a piece
-     // Note: Depending on your game rules, you may adjust whether you include the destination in your count.
-     // If you're allowed to capture an opponent's piece at the destination, you might want to conditionally increase the count.
-     // For now, this template assumes you might end on an opponent's piece for a capture, hence counting it as well.
-     if (board.getPieceAt(endRow, endCol) != '.' && board.getPieceAt(endRow, endCol) != playerPieceType) {
-         count++;
-     }
-
-     return count;
  }
 

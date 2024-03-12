@@ -2,7 +2,7 @@
  * Name:  Kevin Chicas                                      *
  * Project:  Lines of Action - P1                           *
  * Class:  CMPS 369 - OPL                                   *
- * Date:  03/13/2024                                        *
+ * Date:  03/12/2024                                        *
  ************************************************************/
 
 #pragma once
@@ -13,33 +13,49 @@
 #include <vector>
 #include <string>
 
-// Assuming Move is defined as std::pair<std::pair<int, int>, std::pair<int, int>>;
+ /**
+  * Struct Name: MoveDetails
+  * Purpose: Holds the starting and ending positions of a move, along with positions of any captured pieces.
+  * Parameters: None
+  * Return Value: None
+  * Reference: None
+  */
 struct MoveDetails {
-    std::pair<int, int> start; // Starting position of the move
-    std::pair<int, int> end; // Ending position of the move
-    std::vector<std::pair<int, int>> captures; // Positions of captured pieces
+    //starting position of the move
+    pair<int, int> start; 
+    //end position of the move
+    pair<int, int> end; // Ending position of the move
+    //position of the captured pieces
+    vector<pair<int, int>> captures;
 };
 
+/**
+ * Class Name: ComputerPlayer
+ * Purpose: Represents a computer-controlled player in the game, capable of generating and selecting moves automatically.
+ * Parameters: Inherits from Player class.
+ * Return Value: None
+ * Reference: None
+ */
 class ComputerPlayer : public Player {
 public:
     ComputerPlayer() = default;
-    explicit ComputerPlayer(const std::string& name);
+    explicit ComputerPlayer(const string& name);
 
     void askPlayer() override;
     void selectPiece(char row, int col) override;
     void setDestination(char row, int col) override;
-    std::pair<char, int> getSelectedPiece() const override;
-    std::pair<char, int> getDestination() const override;
-    std::string properNotation(std::pair<int, int> position) const override;
+    pair<char, int> getSelectedPiece() const override;
+    pair<char, int> getDestination() const override;
+    string properNotation(pair<int, int> position) const override;
 
     void generateAllPossibleMoves( Board& board);
     void displayPossibleMoves() const;
     //vector<Move> possibleMoves;
     void processHorizontalMoves(Board& board, int fromRow, int fromCol, int horizontalMovesRequired);
-    std::string revisedProperNotation(std::pair<int, int> position) const;
+    string revisedProperNotation(pair<int, int> position) const;
 
     //void selectAndExecuteMove(Board& board, char playerPieceType);
-    std::pair<std::string, std::string> selectAndExecuteMove(Board& board, char playerPieceType);
+    pair<string, string> selectAndExecuteMove(Board& board, char playerPieceType);
     void addMoveIfValid( Board& board, int startRow, int startCol, int endRow, int endCol);
 
 
@@ -53,8 +69,11 @@ public:
 
 private:
     //vector<Move> possibleMoves;
+    //list of possible moves generated
     vector<MoveDetails> possibleMoves;
-    Rules rules; // Used for validating moves
+    //instance used to validate moves
+    Rules rules;
+    //counter for moves
     int moveCounter = 0;
-    //Round test;
+    
 };

@@ -49,7 +49,7 @@ public:
 
 
 private:
-    static std::pair<int, int> directionOffsets(char direction); //diagonal logic
+    static pair<int, int> directionOffsets(char direction); //diagonal logic
 
 #endif
 };

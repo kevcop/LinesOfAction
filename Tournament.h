@@ -6,7 +6,7 @@
  ************************************************************/
 #pragma once
 
-#include <memory> // For std::unique_ptr
+#include <memory> // For unique_ptr
 #include <vector>
 #include "Player.h"
 #include "Round.h" // Ensure this is correctly included
@@ -21,10 +21,10 @@
 class Tournament {
 private:
     int currentRoundNumber; ///< Tracks the current round number in the tournament.
-    std::vector<int> scores; ///< Scores for the players, assuming two players.
-    std::shared_ptr<Player> player1; ///< Shared pointer to the first player.
-    std::shared_ptr<Player> player2; ///< Shared pointer to the second player.
-    std::shared_ptr<Player> startingPlayer; ///< The player who starts the next round.
+    vector<int> scores; ///< Scores for the players, assuming two players.
+    shared_ptr<Player> player1; ///< Shared pointer to the first player.
+    shared_ptr<Player> player2; ///< Shared pointer to the second player.
+    shared_ptr<Player> startingPlayer; ///< The player who starts the next round.
 
 public:
     /**
@@ -32,7 +32,7 @@ public:
      * @param p1 A shared pointer to the first player.
      * @param p2 A shared pointer to the second player.
      */
-    Tournament(std::shared_ptr<Player> p1, std::shared_ptr<Player> p2);
+    Tournament(shared_ptr<Player> p1, shared_ptr<Player> p2);
 
     /**
      * @brief Initiates the gameplay for the next round in the tournament.
@@ -65,5 +65,5 @@ public:
      * @brief Resumes the tournament from a previously saved state.
      * @param loadedRound A unique pointer to the loaded round.
      */
-    void resumeTournament(std::unique_ptr<Round> loadedRound);
+    void resumeTournament(unique_ptr<Round> loadedRound);
 };

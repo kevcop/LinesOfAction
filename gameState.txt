@@ -1,21 +1,20 @@
 Board:
-x x x x x x x x 
-w x x x x x x x 
-b b b x x x x x 
-b x w x x b x x 
-w x x b b x x x 
-x b w b x w w x 
-x x x x x x x w 
-x x x x x x x x 
-
+. B B . B B B .
+W . . . . . . W
+. . . W . . . W
+W . . . . . . W
+W . . . . . . W
+W . . . W . . .
+W . . . . . . W
+. B B B . B B .
 
 Human:
 Rounds won: 0
 Score: 0
 
 Computer:
-Rounds won: 1
-Score: -2
+Rounds won: 0
+Score: 0
 
-Next player: Human
-Color: White
+Next player: Computer
+Color: B

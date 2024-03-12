@@ -51,18 +51,18 @@ public:
      * @brief Retrieves the selected piece by the human player.
      * @return The selected piece's position as a pair of row (char) and column (int).
      */
-    std::pair<char, int> getSelectedPiece() const override;
+    pair<char, int> getSelectedPiece() const override;
 
     /**
      * @brief Retrieves the chosen destination for a move by the human player.
      * @return The chosen destination's position as a pair of row (char) and column (int).
      */
-    std::pair<char, int> getDestination() const override;
+    pair<char, int> getDestination() const override;
 
     /**
      * @brief Converts positions to a chess-like notation for the human player.
      * @param position The board position to convert.
      * @return A string representing the position in chess notation (e.g., A6).
      */
-    std::string properNotation(std::pair<int, int> position) const override;
+    string properNotation(pair<int, int> position) const override;
 };

@@ -21,23 +21,33 @@ map<char, int> colToIndex = {
 {'A', 0}, {'B', 1}, {'C', 2}, {'D', 3},
 {'E', 4}, {'F', 5}, {'G', 6}, {'H', 7}
 };
-//cosntructor for setting board and players
-//Round::Round(Player* p1, Player* p2) : player1(p1), player2(p2), currentPlayer(nullptr), isPlayer1Turn(true),player1Score(0), player2Score(0), winner(nullptr) {
-//    srand(static_cast<unsigned int>(time(nullptr))); // seed
-//    gameBoard.resetBoard(); // Initialize the board
-//}
-// 
-Round::Round(std::shared_ptr<Player> p1, std::shared_ptr<Player> p2) : player1(p1), player2(p2), currentPlayer(nullptr), isPlayer1Turn(true), player1Score(0), player2Score(0), winner(nullptr) {
-    srand(static_cast<unsigned int>(time(nullptr))); // Seed
-    gameBoard.resetBoard(); // Initialize the board
+
+Round::Round(shared_ptr<Player> p1, shared_ptr<Player> p2) : player1(p1), player2(p2), currentPlayer(nullptr), isPlayer1Turn(true), player1Score(0), player2Score(0), winner(nullptr) {
+    //creating seed
+    srand(static_cast<unsigned int>(time(nullptr))); 
+    //reset board to initial state
+    gameBoard.resetBoard(); 
 }
 
-//decide who goes first
+/**
+ * Function Name: coinToss
+ * Purpose: Decides which player starts the game through a coin toss.
+ * Parameters: None
+ * Return Value: None
+ * Algorithm:
+ *     1. Prompt the user to choose heads (1) or tails (2).
+ *     2. Generate a random number (1 or 2) representing the coin toss result.
+ *     3. Compare the user's choice with the toss result to determine the starting player.
+ *     4. Assign the piece types ('B' or 'W') to the players based on the coin toss outcome.
+ * Reference: None
+ */
 void Round::coinToss() {
     cout << "Enter 1 for heads or 2 for tails.\n";
+    //tracks the user choice for heads or tails
     int userChoice;
     cin >> userChoice;
-    int toss = rand() % 2 + 1; // get rand num
+    //gen rand num
+    int toss = rand() % 2 + 1; 
     // assign first move
     if (userChoice == toss) {
         currentPlayer = player1;
@@ -52,31 +62,71 @@ void Round::coinToss() {
         player1->setPieceType('W');
     }
 }
-// change turns
+/**
+ * Function Name: switchTurn
+ * Purpose: Switches the turn between the two players.
+ * Parameters: None
+ * Return Value: None
+ * Algorithm:
+ *     1. Check which player is currently playing.
+ *     2. Switch the currentPlayer to the other player.
+ *     3. Announce the next player's turn.
+ * Reference: None
+ */
 void Round::switchTurn() {
     if (currentPlayer == player1) {
+        //switch to player 2 
         currentPlayer = player2;
     }
     else {
+        //switch to player 1 
         currentPlayer = player1;
     }
+    //indicate whose turn it is
     cout << "It's now " << currentPlayer->getName() << "'s turn.\n";
 }
-// logic for movement
+/**
+ * Function Name: playerMove
+ * Purpose: Manages the movement of a player's piece.
+ * Parameters: None
+ * Return Value: None
+ * Algorithm:
+ *     1. Prompt the current player for the move they wish to make.
+ *     2. Validate and execute the move if it is legal.
+ *     3. Log the move.
+ * Reference: None
+ */
 void Round::playerMove() {
+    //prompt for move
     promptMove();
+    //prompt for destination
     promptDestination();
+    //output move executed 
     cout << "Player " << currentPlayer->getName() << " moves piece from "
         << currentPlayer->properNotation(currentPlayer->getSelectedPiece())
         << " to " << currentPlayer->properNotation(currentPlayer->getDestination()) << endl;
     //switchTurn();
 }
-//ask for move
+/**
+ * Function Name: promptMove
+ * Purpose: Asks the current player for their move.
+ * Parameters: None
+ * Return Value: None
+ * Algorithm:
+ *     1. Prompt the current player for the starting and ending position of the move.
+ *     2. Validate the input format.
+ *     3. Attempt to execute the move and log it if successful.
+ * Reference: None
+ */
 void Round::promptMove() {
+    //store input for from and to positions
     string from, to;
+    //indicate the turn ownership
     cout << currentPlayer->getName() << ", it's your turn." << endl;
+    //recording initial piece selection
     cout << "Enter your move from (e.g., A6): ";
     cin >> from;
+    //record destination
     cout << "Enter move to (e.g., B6): ";
     cin >> to;
 
@@ -85,16 +135,28 @@ void Round::promptMove() {
     int fromRow = from[1] - '1';
     int toCol = colToIndex[toupper(to[0])];
     int toRow = to[1] - '1';
-
+    //execute move if valid and log 
     if (gameBoard.movePiece(fromRow, fromCol, toRow, toCol, currentPlayer->getPieceType())) {
         logMove(from, to);
     }
+    //if move is deemed invalid, prompt for another move 
     else {
         cout << "Invalid move. Please try again." << endl;
     }
 }
-//ask for destination
+/**
+ * Function Name: promptDestination
+ * Purpose: Prompts the current player to select a destination for their piece.
+ * Parameters: None
+ * Return Value: None
+ * Algorithm:
+ *     1. Ask the player for the column (A-H) and row (1-8) of the destination.
+ *     2. Convert the column letter to an index and adjust row for 0-based indexing.
+ *     3. Call setDestination with the converted column and row values.
+ * Reference: None
+ */
 void Round::promptDestination() {
+    //prompt user to enter a destination
     char colLetter;
     int row;
     cout << currentPlayer->getName() << ", select a destination for the piece." << endl;
@@ -106,42 +168,49 @@ void Round::promptDestination() {
     //convert column letter to index
     int col = toupper(colLetter) - 'A';
     if (col >= 0 && col < 8 && row >= 1 && row <= 8) {
-        currentPlayer->setDestination(row - 1, col); // 0 based indexing adjustment
+        currentPlayer->setDestination(row - 1, col); 
     }
     else {
         cout << "Invalid input. Please try again." << endl;
     }
 }
-
+/**
+ * Function Name: playerTurn
+ * Purpose: Executes the logic for the current player's turn.
+ * Parameters: None
+ * Return Value: None
+ * Algorithm:
+ *     1. If the current player is a computer, generate and execute a move.
+ *     2. If the current player is a human, prompt for a piece to move and a destination, then attempt the move.
+ *     3. Log the move, display the move log, and update the board display.
+ * Reference: None
+ */
 void Round::playerTurn() {
-    cout << "Start of Player turn" << endl;
-    if (auto compPlayer = std::dynamic_pointer_cast<ComputerPlayer>(currentPlayer)) {
+    //cout << "Start of Player turn" << endl;
+    //checking if currentPlayer is computer 
+    if (auto compPlayer = dynamic_pointer_cast<ComputerPlayer>(currentPlayer)) {
         cout << "Computer detected" << endl;
-        // Generate all possible moves for the computer player
-       // cout << "before generating all possible moves!\n";
-        //gameBoard.showBoard();
+        //call computer player function to generate moves based on the current game board
             compPlayer->generateAllPossibleMoves(gameBoard);
-           
-        // Let the computer player select one of the generated moves and execute it
-        //compPlayer->selectAndExecuteMove(gameBoard, compPlayer->getPieceType());
-
-        // Assuming selectAndExecuteMove handles move execution, logging, and displaying,
-        // there's no need for the commented-out manual execution and logging here.
-        // Hence, the next lines regarding manual execution and logging are removed.
-           // cout << "After the ai generates it move " << endl;
-            //gameBoard.showBoard();
+    //record move selected by compouter
         auto moveDetails = compPlayer->selectAndExecuteMove(gameBoard, compPlayer->getPieceType());
-        
+        //check to see if moveDetails is empty
         if (!moveDetails.first.empty() && !moveDetails.second.empty()) {
+            //record move made
             logMove(moveDetails.first, moveDetails.second);
             displayMoveLog(); // Optional: Display the move log to see all moves made so far
         }
+        //used to record the captures
         vector<pair<int, int >> captures;
+        //call function to intiate a capturing of piece
         rules.processCaptures(gameBoard, captures);
-        gameBoard.showBoard(); // Display the updated board state
-        switchTurn(); // Exit the method early for computer player
+        //display board
+        gameBoard.showBoard(); 
+        //switch turn after successful move
+        switchTurn(); 
     }
     else {
+        //human player turn
         cout << currentPlayer->getName() << ", it's your turn." << endl;
         char fromColLetter, toColLetter;
         int fromRow, toRow;
@@ -152,19 +221,20 @@ void Round::playerTurn() {
         cin >> fromColLetter;
         cout << "Row (1-8): ";
         cin >> fromRow;
-
+        //convert to upper due to nature
         int fromCol = toupper(fromColLetter) - 'A';
         fromRow -= 1;
 
-        // Ask for location
+        // Ask for destination
         cout << "Select a destination for the piece." << endl;
         cout << "Column (A-H): ";
         cin >> toColLetter;
         cout << "Row (1-8): ";
         cin >> toRow;
-
+        //convert to upper 
         int toCol = toupper(toColLetter) - 'A';
         toRow -= 1;
+        //variable used for recording captures
         vector<pair<int, int>> capturePositions;
 
         // Validation checks
@@ -173,9 +243,7 @@ void Round::playerTurn() {
             rules.isValidEndingPosition(gameBoard, toRow, toCol, currentPlayer->getPieceType())) {
             
             cout << "Passed validation checks!" << endl;
-            // Execute the move
-            //gameBoard.movePiece(fromRow, fromCol, toRow, toCol, currentPlayer->getPieceType());
-            //cout << "Attempting to move piece from " << fromPosition << " to " << toPosition << endl;
+            //log mmove and update board if move is successful
             if (gameBoard.movePiece(fromRow, fromCol, toRow, toCol, currentPlayer->getPieceType())) {
                 cout << "Move successful." << endl;
 
@@ -205,182 +273,73 @@ void Round::playerTurn() {
         }
 
         switchTurn(); // Next player's turn
-        std::string saveChoice;
-        std::cout << "Turn has switched. Would you like to save the game at this point? (yes/no): ";
-        std::cin >> saveChoice;
+        string saveChoice;
+        //prompt for saving a game
+        cout << "Turn has switched. Would you like to save the game at this point? (yes/no): ";
+        cin >> saveChoice;
 
         if (saveChoice == "yes") {
             // Assume getCurrentPlayer() returns the player whose turn is next
-            std::shared_ptr<Player> nextPlayer = getCurrentPlayer();
-            std::string nextPlayerName = nextPlayer->getName();
+            shared_ptr<Player> nextPlayer = getCurrentPlayer();
+            string nextPlayerName = nextPlayer->getName();
             char nextPlayerPieceType = nextPlayer->getPieceType();
 
             // Save the game state. Adjust the parameters as necessary.
             Serialization::saveGameState(*this);
-            std::cout << "Game state saved successfully.\n";
+            cout << "Game state saved successfully.\n";
 
             cout << "The game will now close!" << endl;
             exit(1);
         }
     }
 }
-
-//// handles the move logic and validates
-//void Round::playerTurn() {
-//    cout << currentPlayer->getName() << "'s turn." << endl;
-//    if (auto compPlayer = std::dynamic_pointer_cast<ComputerPlayer>(currentPlayer)) {
-//        // Generate all possible moves and choose the best one
-//        compPlayer->generateAllPossibleMoves(gameBoard);
-//        compPlayer->chooseBestMove();
-//
-//        auto selectedPiece = compPlayer->getSelectedPiece();
-//        auto destination = compPlayer->getDestination();
-//
-//        // Execute the move
-//        gameBoard.movePiece(selectedPiece.first - 'A', selectedPiece.second - 1, destination.first - 'A', destination.second - 1, compPlayer->getPieceType());
-//
-//        // Logging and displaying the move
-//        cout << "Computer moved from " << compPlayer->properNotation(selectedPiece) << " to " << compPlayer->properNotation(destination) << endl;
-//
-//        switchTurn(); // Switch turn after computer's move
-//        return; // Exit the method early for computer player
-//    }
-//
-//
-//    char fromColLetter, toColLetter;
-//    int fromRow, toRow;
-//
-//    // Prompt for current location of the piece
-//    cout << "Select a piece to move." << endl;
-//    cout << "Column (A-H): ";
-//    cin >> fromColLetter;
-//    cout << "Row (1-8): ";
-//    cin >> fromRow;
-//
-//    int fromCol = toupper(fromColLetter) - 'A';
-//    fromRow -= 1;
-//
-//    //ask for location
-//    cout << "Select a destination for the piece." << endl;
-//    cout << "Column (A-H): ";
-//    cin >> toColLetter;
-//    cout << "Row (1-8): ";
-//    cin >> toRow;
-//
-//
-//    int toCol = toupper(toColLetter) - 'A';
-//    toRow -= 1;
-//    vector<pair<int, int>> capturePositions;
-//
-//    // validation checks
-//    if (rules.isValidMove(gameBoard, *currentPlayer, fromRow, fromCol, toRow, toCol) &&
-//        rules.isPathClear(gameBoard, fromRow, fromCol, toRow, toCol, currentPlayer->getPieceType(), capturePositions) &&
-//        rules.isValidEndingPosition(gameBoard, toRow, toCol, currentPlayer->getPieceType())) {
-//
-//        // execute the move
-//        gameBoard.movePiece(fromRow, fromCol, toRow, toCol, currentPlayer->getPieceType());
-//
-//        // record move
-//        string fromPosition = fromColLetter + to_string(fromRow + 1);
-//        string toPosition = toColLetter + to_string(toRow + 1);
-//        logMove(fromPosition, toPosition);
-//        displayMoveLog();
-//
-//        cout << "Move successful." << endl;
-//
-//        gameBoard.showBoard();
-//    }
-//    else {
-//        cout << "Invalid move. Please try again." << endl;
-//        return; // dont want to switch turns if invalid move
-//    }
-//    /*cout << "Do you want to save the game? (yes/no): ";
-//    string input;
-//    cin >> input;
-//    if (input == "yes") {
-//        Serialization::saveGameState(gameBoard, *player1, *player2, isPlayer1Turn, player1Score, player2Score);
-//        cout << "Game saved successfully.\n";
-//    }*/
-//    switchTurn(); //next player's turn
-//}
-// 
-// 
-//void Round::playerTurn() {
-//    cout << currentPlayer->getName() << ", it's your turn." << endl;
-//
-//    char fromColLetter, toColLetter;
-//    int fromRow, toRow;
-//
-//    // Prompt for current location of the piece
-//    cout << "Select a piece to move." << endl;
-//    cout << "Column (A-H): ";
-//    cin >> fromColLetter;
-//    cout << "Row (1-8): ";
-//    cin >> fromRow;
-//
-//    int fromCol = toupper(fromColLetter) - 'A';
-//    fromRow -= 1;
-//
-//    //ask for location
-//    cout << "Select a destination for the piece." << endl;
-//    cout << "Column (A-H): ";
-//    cin >> toColLetter;
-//    cout << "Row (1-8): ";
-//    cin >> toRow;
-//
-//
-//    int toCol = toupper(toColLetter) - 'A';
-//    toRow -= 1;
-//    vector<pair<int, int>> capturePositions;
-//
-//    // validation checks
-//    if (rules.isValidMove(gameBoard, *currentPlayer, fromRow, fromCol, toRow, toCol) &&
-//        rules.isPathClear(gameBoard, fromRow, fromCol, toRow, toCol, currentPlayer->getPieceType(), capturePositions) &&
-//        rules.isValidEndingPosition(gameBoard, toRow, toCol, currentPlayer->getPieceType())) {
-//
-//        // execute the move
-//        gameBoard.movePiece(fromRow, fromCol, toRow, toCol, currentPlayer->getPieceType());
-//
-//        // record move
-//        string fromPosition = fromColLetter + to_string(fromRow + 1);
-//        string toPosition = toColLetter + to_string(toRow + 1);
-//        logMove(fromPosition, toPosition);
-//        displayMoveLog();
-//
-//        cout << "Move successful." << endl;
-//
-//        gameBoard.showBoard();
-//    }
-//    else {
-//        cout << "Invalid move. Please try again." << endl;
-//        return; // dont want to switch turns if invalid move
-//    }
-//    /*cout << "Do you want to save the game? (yes/no): ";
-//    string input;
-//    cin >> input;
-//    if (input == "yes") {
-//        Serialization::saveGameState(gameBoard, *player1, *player2, isPlayer1Turn, player1Score, player2Score);
-//        cout << "Game saved successfully.\n";
-//    }*/
-//    switchTurn(); //next player's turn
-//}
-
-// record recent move
+/**
+ * Function Name: logMove
+ * Purpose: Records a move made by the current player.
+ * Parameters:
+ *     from, a string - the starting position of the move in chess notation.
+ *     to, a string - the ending position of the move in chess notation.
+ * Return Value: None
+ * Algorithm:
+ *     1. Construct a summary string from the move details.
+ *     2. Add the summary to the moveLog vector.
+ * Reference: None
+ */
 void Round::logMove(const string& from, const string& to) {
-
+    //record move made
     string moveSummary = currentPlayer->getName() + " moves from " + from + " to " + to;
+    //add to vector 
     moveLog.push_back(moveSummary);
 }
 
-// record all moves
+/**
+ * Function Name: displayMoveLog
+ * Purpose: Displays all moves made in the game so far.
+ * Parameters: None
+ * Return Value: None
+ * Algorithm:
+ *     1. Iterate through the moveLog vector and print each move.
+ * Reference: None
+ */
 void Round::displayMoveLog() const {
     cout << "Move Log:" << endl;
+    //iterate through vector and output move
     for (const auto& move : moveLog) {
         cout << move << endl;
     }
 }
 
-// ask fo location index
+/**
+ * Function Name: promptPieceLocation
+ * Purpose: Asks the player for a piece's location using chess notation.
+ * Parameters:
+ *     locationDescription, a string reference to store the piece's location in a descriptive format.
+ * Return Value: None
+ * Algorithm:
+ *     1. Prompt the player for the column and row of the piece.
+ *     2. Convert the input into a standardized description format.
+ * Reference: None
+ */
 void Round::promptPieceLocation(string& locationDescription) {
     char column;
     int row;
@@ -388,21 +347,42 @@ void Round::promptPieceLocation(string& locationDescription) {
     cin >> column;
     cout << "Enter row (1-8): ";
     cin >> row;
-
+    //translate column input to an index 
     int colIndex = translateColumn(toupper(column));
     locationDescription = to_string(colIndex) + to_string(row - 1);
 }
 
-//translate column 
+/**
+ * Function Name: translateColumn
+ * Purpose: Converts a column letter to its corresponding index.
+ * Parameters:
+ *     columnLetter, a char representing the column letter.
+ * Return Value: The index of the column as an int.
+ * Algorithm:
+ *     1. Use the colToIndex map to convert the column letter to an index.
+ * Reference: None
+ */
 int Round::translateColumn(char columnLetter) {
+    //use mapping to convert the letter to an index
     if (colToIndex.find(columnLetter) != colToIndex.end()) {
         return colToIndex[columnLetter];
     }
-    return -1; // not a valid input
+    //indicates a invalid input
+    return -1; 
 }
-
-
+/**
+ * Function Name: startGame
+ * Purpose: Initiates the game with an optional starting player.
+ * Parameters:
+ *     startingPlayer, a shared_ptr<Player> indicating the player to start, defaulting to nullptr.
+ * Return Value: None
+ * Algorithm:
+ *     1. If a starting player is provided, use it as the currentPlayer; otherwise, perform a coin toss.
+ *     2. Enter the main game loop, prompting for moves and checking game-ending conditions.
+ * Reference: None
+ */
 void Round::startGame(shared_ptr<Player> startingPlayer = nullptr) {
+    //set the starting player if its provided, otherwise intiate a coin toss
     if (startingPlayer != nullptr) {
         this->currentPlayer = startingPlayer;
     }
@@ -411,11 +391,14 @@ void Round::startGame(shared_ptr<Player> startingPlayer = nullptr) {
     }
     //coinToss(); // 
 
-    // Main game loop
+    //main game loop
+    //variable indicates if a game/round has ended
     bool gameOver = false;
     while (!gameOver) {
-        gameBoard.showBoard(); // Display the board at the start of each turn
-        playerTurn(); // the current player's turn
+        //display board at each turn
+        gameBoard.showBoard(); 
+        //switch turns
+        playerTurn(); // 
 
         // Check if all pieces of one color are connected after each turn
         bool blackConnected = checkConnectedGroup('B');
@@ -423,97 +406,122 @@ void Round::startGame(shared_ptr<Player> startingPlayer = nullptr) {
 
         if (blackConnected || whiteConnected) {
             // If any color's pieces are all connected, the round is considered over
-            determineWinner(); // Determine and announce the winner based on the game state
-            updateScores(); // Update the scores based on this round's outcome
-
-            gameOver = true; // Mark the game as over
+            //determine winner 
+            determineWinner(); 
+            //update scores
+            updateScores(); 
+            //game is over
+            gameOver = true; 
             cout << "Round over!" << endl;
         }
     }
-
+    //display ending state of board
     gameBoard.showBoard();
     cout << "Game over!" << endl;
 }
-
-
-
-
-//void Round::updateScores() {
-//    auto [blackCount, whiteCount] = gameBoard.countPiecesByColor(); //COUNT PIECES
-//
-//
-//    int piecesPlayer1 = (player1->getPieceType() == 'B') ? blackCount : whiteCount; //get pieces
-//    int piecesPlayer2 = (player2->getPieceType() == 'B') ? blackCount : whiteCount;
-//
-//    // Update scores based on the difference in the number of pieces
-//    player1Score += piecesPlayer1 - piecesPlayer2; 
-//    player2Score += piecesPlayer2 - piecesPlayer1;
-//}
-
+/**
+ * Function Name: updateScores
+ * Purpose: Updates the scores for the players after determining the winner.
+ * Parameters: None
+ * Return Value: None
+ * Algorithm:
+ *     1. Count black and white pieces on the board.
+ *     2. Determine the score difference based on the winner.
+ *     3. Update the winner's score by the score difference.
+ * Reference: None
+ */
 void Round::updateScores() {
-    auto [blackCount, whiteCount] = gameBoard.countPiecesByColor(); // Count pieces
+    //count pieces for each player
+    auto [blackCount, whiteCount] = gameBoard.countPiecesByColor(); 
 
     int player1Pieces = player1->getPieceType() == 'B' ? blackCount : whiteCount;
     int player2Pieces = player2->getPieceType() == 'B' ? blackCount : whiteCount;
 
-    // Assuming winner has been correctly identified
+    //adjust scores based on winners count
     if (winner == player1) {
         // Calculate score difference for the winner
         int scoreDifference = player1Pieces - player2Pieces;
-        player1Score += scoreDifference; // Only winner's score is updated
+        //only winner score updated
+        player1Score += scoreDifference; 
         cout << "score difference: " << scoreDifference;
 
     }
     else if (winner == player2) {
         // Calculate score difference for the winner
         int scoreDifference = player2Pieces - player1Pieces;
-        player2Score += scoreDifference; // Only winner's score is updated
+        player2Score += scoreDifference; 
         cout << "score difference: " << scoreDifference;
 
     }
     // The loser does not gain or lose points from the round outcome
 }
-
+/**
+ * Function Name: calculateScore
+ * Purpose: Calculates the score difference between the two players.
+ * Parameters: None
+ * Return Value: The score difference as an integer.
+ * Algorithm:
+ *     1. Count black and white pieces on the board.
+ *     2. Calculate the score difference based on players' pieces.
+ * Reference: None
+ */
 int Round::calculateScore() const {
     auto [blackCount, whiteCount] = gameBoard.countPiecesByColor(); //COUNT PIECES
 
-    // Example calculation - adjust based on your scoring logic
+    
     int piecesPlayer1 = (player1->getPieceType() == 'B') ? blackCount : whiteCount; //get pieces
     int piecesPlayer2 = (player2->getPieceType() == 'B') ? blackCount : whiteCount; //get pieces
-
-    return piecesPlayer1 - piecesPlayer2; //score calc
+    //return score difference 
+    return piecesPlayer1 - piecesPlayer2;
 }
-
+/**
+ * Function Name: checkRoundOver
+ * Purpose: Checks if the current round is over based on game conditions.
+ * Parameters: None
+ * Return Value: A boolean indicating if the round is over.
+ * Algorithm:
+ *     1. Placeholder function, implement based on game-ending conditions.
+ * Reference: None
+ */
 bool Round::checkRoundOver() const {
   //place holder
     return false;
 }
-
-
+/**
+ * Function Name: determineWinner
+ * Purpose: Determines the winner of the current round based on the game state.
+ * Parameters: None
+ * Return Value: None
+ * Algorithm:
+ *     1. Check if all pieces of one color are connected for both players.
+ *     2. Set the winner accordingly and update rounds won.
+ *     3. Handle a draw or special conditions if necessary.
+ * Reference: None
+ */
 void Round::determineWinner() {
     // Check if all pieces of one color are connected for both players
     bool player1Connected = checkConnectedGroup(player1->getPieceType());
     bool player2Connected = checkConnectedGroup(player2->getPieceType());
-
+    //display winner
     if (player1Connected && !player2Connected) {
-        std::cout << player1->getName() << " wins this round!" << std::endl;
+        cout << player1->getName() << " wins this round!" << endl;
         winner = player1;
         player1->setRoundsWon(player1->getRoundsWon()+1);
     }
     else if (!player1Connected && player2Connected) {
-        std::cout << player2->getName() << " wins this round!" << std::endl;
+        cout << player2->getName() << " wins this round!" << endl;
         winner = player2;
         player2->setRoundsWon(player2->getRoundsWon() + 1);
 
     }
+    //THESE CHECKS MAY NOT BE NECESSARY 
     else if (player1Connected && player2Connected) {
-        // This scenario may indicate an error or a special rule.
-        std::cout << "Both players seem to have connected groups. Check for a possible error." << std::endl;
-        winner = nullptr; // Handle according to your game's rules.
+        
+        cout << "Both players seem to have connected groups. Check for a possible error." << endl;
+        winner = nullptr; 
     }
     else {
-        std::cout << "No player has formed a connected group yet." << std::endl;
-        // The game continues if no winner is determined.
+        cout << "No player has formed a connected group yet." << endl;
         winner = nullptr;
     }
 
@@ -525,11 +533,21 @@ void Round::determineWinner() {
 
 //ALGO APPROACH
 
-
-// Check if all pieces of one color are connected
+/**
+ * Function Name: checkConnectedGroup
+ * Purpose: Checks if all pieces of a specified color are connected.
+ * Parameters:
+ *     color, a char representing the color to check for connectivity.
+ * Return Value: A boolean indicating if all pieces of the color are connected.
+ * Algorithm:
+ *     1. Perform a depth-first search starting from any piece of the specified color.
+ *     2. Check if all pieces of that color are reachable from the starting piece.
+ * Reference: Chatgpt
+ */
 bool Round::checkConnectedGroup(char color) const {
     int startRow = -1, startCol = -1;
-    std::vector<std::vector<bool>> visited(8, std::vector<bool>(8, false));
+    //keeps track of pieces visited
+    vector<vector<bool>> visited(8, vector<bool>(8, false));
 
     // Find the starting piece of the given color
     for (int row = 0; row < 8 && startRow == -1; ++row) {
@@ -552,115 +570,131 @@ bool Round::checkConnectedGroup(char color) const {
     for (int row = 0; row < 8; ++row) {
         for (int col = 0; col < 8; ++col) {
             if (gameBoard.getPieceAt(row, col) == color && !visited[row][col]) {
-                return false; // Found an unvisited piece of the same color
+                //found unvisited piece
+                return false; 
             }
         }
     }
-
-    return true; // All pieces of the color are connected
+    //all pieces are connected
+    return true; 
 }
 
-// Utility function for DFS traversal
-void Round::DFS(int row, int col, char color, std::vector<std::vector<bool>>& visited) const {
+/**
+ * Function Name: DFS
+ * Purpose: Performs a depth-first search to check connectivity of pieces.
+ * Parameters:
+ *     row, col, integers indicating the starting position for DFS.
+ *     color, a char indicating the color of pieces to check for connectivity.
+ *     visited, a reference to a 2D vector of bools marking visited positions.
+ * Return Value: None
+ * Algorithm:
+ *     1. Recursively visit all connected positions of the specified color.
+ * Reference: None
+ */
+void Round::DFS(int row, int col, char color, vector<vector<bool>>& visited) const {
+    //define search directions
     static const int rowNbr[] = { -1, 1, 0, 0, -1, -1, 1, 1 };
     static const int colNbr[] = { 0, 0, -1, 1, -1, 1, -1, 1 };
-
+    //mark pos as visited 
     visited[row][col] = true;
 
     // Recur for all connected neighbours
     for (int k = 0; k < 8; ++k) {
+        //check to see if move is within bounds, correct color piece, and not visited yet
         if (isSafe(row + rowNbr[k], col + colNbr[k], color, visited)) {
             DFS(row + rowNbr[k], col + colNbr[k], color, visited);
         }
     }
 }
 
-// Check if a cell can be included in DFS
-bool Round::isSafe(int row, int col, char color, std::vector<std::vector<bool>>& visited) const {
+/**
+ * Function Name: isSafe
+ * Purpose: Checks if a cell is safe to include in the DFS for checking connectivity.
+ * Parameters:
+ *     row, col, integers indicating the position to check.
+ *     color, a char indicating the color of pieces to check for connectivity.
+ *     visited, a reference to a 2D vector of bools marking visited positions.
+ * Return Value: A boolean indicating if the position is safe to include in DFS.
+ * Algorithm:
+ *     1. Check if the position is within bounds, matches the specified color, and has not been visited.
+ * Reference: None
+ */
+bool Round::isSafe(int row, int col, char color, vector<vector<bool>>& visited) const {
+    //return true or false if a piece is safe to visit 
     return (row >= 0) && (row < 8) && (col >= 0) && (col < 8) &&
         (gameBoard.getPieceAt(row, col) == color) && !visited[row][col];
 }
-//EXPERIMENTAL
-void Round::startGameWithoutCoinToss() {
-
-    // Main game loop remains the same as in startGame
-    bool gameOver = false;
-    while (!gameOver) {
-        gameBoard.showBoard(); // Display the board at the start of each turn
-        playerTurn(); // Conduct the current player's turn
-
-        if (checkRoundOver()) {
-            determineWinner(); // Determine and announce the winner
-            updateScores(); // Update the scores based on this round's outcome
-            gameOver = true; // Mark the game as over
-        }
-    }
-
-    gameBoard.showBoard();
-    std::cout << "Game over!" << std::endl;
-}
-
-
+/**
+ * Function Name: setStartingPlayer
+ * Purpose: Sets the starting player for the game.
+ * Parameters:
+ *     startingPlayer, a shared_ptr<Player> indicating the player to start the game.
+ * Return Value: None
+ * Algorithm:
+ *     1. Set currentPlayer to startingPlayer.
+ *     2. Determine if it is player 1's turn based on the starting player.
+ * Reference: None
+ */
 void Round::setStartingPlayer(shared_ptr<Player> startingPlayer) {
     currentPlayer = startingPlayer;
     // Determine if it is player 1's turn based on the starting player
     isPlayer1Turn = (currentPlayer == player1);
 
 }
+/**
+ * Function Name: getRoundWinner
+ * Purpose: Retrieves the winner of the current round.
+ * Parameters: None
+ * Return Value: A shared_ptr<Player> pointing to the winner of the round.
+ * Algorithm:
+ *     1. Return the winner member variable.
+ * Reference: None
+ */
 shared_ptr<Player> Round::getRoundWinner() const {
     return winner;
 }
-
+/**
+ * Function Name: setBoardState
+ * Purpose: Sets the board to a specified state.
+ * Parameters:
+ *     loadedBoard, a Board object representing the new state of the board.
+ * Return Value: None
+ * Algorithm:
+ *     1. Update the gameBoard member variable to reflect the loadedBoard state.
+ * Reference: None
+ */
 void Round::setBoardState(const Board& loadedBoard) {
-    this->gameBoard = loadedBoard; // Assuming `gameBoard` is your Board instance in `Round`
+    //grants access to current object
+    this->gameBoard = loadedBoard; 
 }
 
-void Round::updatePlayerPieceTypes(char humanPieceType, char computerPieceType) {
-    auto humanPlayer = std::dynamic_pointer_cast<HumanPlayer>(player1->getName() == "Human" ? player1 : player2);
-    auto computerPlayer = std::dynamic_pointer_cast<ComputerPlayer>(player1->getName() == "AI" ? player1 : player2);
-
-    if (humanPlayer) {
-        humanPlayer->setPieceType(humanPieceType);
-    }
-
-    if (computerPlayer) {
-        computerPlayer->setPieceType(computerPieceType);
-    }
-}
-
-//void Round::continueRound() {
-//    // Check if the game has a winner or if the game can continue
-//    if (checkRoundOver()) {
-//        determineWinner();
-//        updateScores();
-//        // Handle end of round logic here
-//    }
-//    else {
-//        cout << "Resuming game...\n";
-//        gameBoard.showBoard();
-//        cout << "It's " << currentPlayer->getName() << "'s turn." << endl;
-//
-//        // Continue with the gameplay
-//        //startGame();
-//        cout << "Right before hitting player turn function" << endl;
-//        playerTurn();
-//    }
-//}
-
+/**
+ * Function Name: continueRound
+ * Purpose: Continues the round from the current state.
+ * Parameters: None
+ * Return Value: None
+ * Algorithm:
+ *     1. Resume gameplay from the current state, checking for game-ending conditions.
+ * Reference: None
+ */
 void Round::continueRound() {
+ 
     bool gameOver = false;
     while (!gameOver) {
-        gameBoard.showBoard(); // Display the board
+        //display board
+        gameBoard.showBoard(); 
         cout << "It's " << currentPlayer->getName() << "'s turn.\n";
-
-        playerTurn(); // Proceed with the current player's turn
+        //proceed with current player turn
+        playerTurn(); 
 
         // Check for game-ending conditions after each turn
         bool blackConnected = checkConnectedGroup('B');
         bool whiteConnected = checkConnectedGroup('W');
         if (blackConnected || whiteConnected) {
+            //annouce winner
             determineWinner(); // Determine and announce the winner
-            updateScores(); // Update scores based on round outcome
+            //update scores
+            updateScores(); 
             gameOver = true; // End the game loop
             cout << "Round over!\n";
         }
@@ -670,123 +704,5 @@ void Round::continueRound() {
     }
 }
 
-
-void Round::continueGameFromSavedState() {
-    cout << "Resuming game...\n";
-    gameBoard.showBoard();
-    cout << "It's " << currentPlayer->getName() << "'s turn." << endl;
-
-    if (std::dynamic_pointer_cast<ComputerPlayer>(currentPlayer)) {
-        continueComputerTurn();
-    }
-    else {
-        continueHumanPlayerTurn();
-    }
-}
-
-void Round::continueHumanPlayerTurn() {
-    // Display current game state to the player
-    cout << "Resuming your turn...\n";
-    gameBoard.showBoard();
-    cout << "It's your turn, " << currentPlayer->getName() << ".\n";
-
-    // Variables to store move input
-    char fromColLetter, toColLetter;
-    int fromRow, toRow;
-
-    // Prompt player for move input
-    cout << "Select a piece to move.\nColumn (A-H): ";
-    cin >> fromColLetter;
-    cout << "Row (1-8): ";
-    cin >> fromRow;
-
-    cout << "Select a destination for the piece.\nColumn (A-H): ";
-    cin >> toColLetter;
-    cout << "Row (1-8): ";
-    cin >> toRow;
-
-    // Convert input to zero-based indexing as necessary
-    int fromCol = toupper(fromColLetter) - 'A';
-    fromRow -= 1; // Adjusting to 0-indexed if necessary
-    int toCol = toupper(toColLetter) - 'A';
-    toRow -= 1; // Adjusting to 0-indexed if necessary
-
-    // Vector to hold any capture positions, if applicable
-    vector<pair<int, int>> capturePositions;
-
-    cout << "Before entering the validation checks\n";
-    gameBoard.showBoard();
-    cout << "Attempting move from [" << fromRow << "," << fromCol << "] to [" << toRow << "," << toCol << "]\n";
-
-    // Validate the move before attempting to execute it
-    bool validMove = rules.isValidMove(gameBoard, *currentPlayer, fromRow, fromCol, toRow, toCol);
-    cout << "isValidMove: " << validMove << "\n";
-    bool pathClear = rules.isPathClear(gameBoard, fromRow, fromCol, toRow, toCol, currentPlayer->getPieceType(), capturePositions);
-    cout << "isPathClear: " << pathClear << ", Captures: " << capturePositions.size() << "\n";
-    bool validEndingPosition = rules.isValidEndingPosition(gameBoard, toRow, toCol, currentPlayer->getPieceType());
-    cout << "isValidEndingPosition: " << validEndingPosition << "\n";
-
-    if (validMove && pathClear && validEndingPosition) {
-        if (gameBoard.movePiece(fromRow, fromCol, toRow, toCol, currentPlayer->getPieceType())) {
-            cout << "Move successful!\n";
-            rules.processCaptures(gameBoard, capturePositions);
-
-            string fromPosition = string(1, fromColLetter) + to_string(fromRow + 1);
-            string toPosition = string(1, toColLetter) + to_string(toRow + 1);
-            logMove(fromPosition, toPosition);
-            displayMoveLog();
-
-            gameBoard.showBoard(); // Show the updated board state after the move
-            switchTurn(); // Move to the next player's turn
-        }
-        else {
-            cout << "Failed to execute move. Please try again.\n";
-        }
-    }
-    else {
-        cout << "Invalid move. Please try again.\n";
-    }
-}
-
-
-
-void Round::continueComputerTurn() {
-    // Display current game state and announce the computer's turn
-    cout << "Resuming the computer's turn...\n";
-    gameBoard.showBoard();
-    cout << "It's the computer's turn, " << currentPlayer->getName() << ".\n";
-
-    // Assuming the ComputerPlayer class has a method to generate and select a move
-    auto compPlayer = std::dynamic_pointer_cast<ComputerPlayer>(currentPlayer);
-    if (!compPlayer) {
-        std::cerr << "Error: Current player is not a computer player as expected.\n";
-        return;
-    }
-
-    // Generate all possible moves for the computer player
-    compPlayer->generateAllPossibleMoves(gameBoard);
-
-    // Select and execute one of the generated moves
-    auto moveDetails = compPlayer->selectAndExecuteMove(gameBoard, compPlayer->getPieceType());
-
-    // Check if a valid move was returned and executed
-    if (!moveDetails.first.empty() && !moveDetails.second.empty()) {
-        // Log the move
-        logMove(moveDetails.first, moveDetails.second);
-        displayMoveLog(); // Optionally display the move log to see all moves made so far
-
-        cout << "Computer moved from " << moveDetails.first << " to " << moveDetails.second << ".\n";
-    }
-    else {
-        // If no valid move could be made, handle accordingly (this may depend on your game's rules)
-        std::cerr << "Computer player unable to make a valid move.\n";
-    }
-
-    // Show the updated board state after the computer's move
-    gameBoard.showBoard();
-
-    // Switch turn to the next player
-    switchTurn();
-}
 
 
