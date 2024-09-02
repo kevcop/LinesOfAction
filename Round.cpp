@@ -186,13 +186,12 @@ void Round::promptDestination() {
  * Reference: None
  */
 void Round::playerTurn() {
-    //cout << "Start of Player turn" << endl;
     //checking if currentPlayer is computer 
     if (auto compPlayer = dynamic_pointer_cast<ComputerPlayer>(currentPlayer)) {
         cout << "Computer detected" << endl;
         //call computer player function to generate moves based on the current game board
-            compPlayer->generateAllPossibleMoves(gameBoard);
-    //record move selected by compouter
+        compPlayer->generateAllPossibleMoves(gameBoard);
+        //record move selected by computer
         auto moveDetails = compPlayer->selectAndExecuteMove(gameBoard, compPlayer->getPieceType());
         //check to see if moveDetails is empty
         if (!moveDetails.first.empty() && !moveDetails.second.empty()) {
@@ -202,16 +201,30 @@ void Round::playerTurn() {
         }
         //used to record the captures
         vector<pair<int, int >> captures;
-        //call function to intiate a capturing of piece
+        //call function to initiate a capturing of piece
         rules.processCaptures(gameBoard, captures);
         //display board
-        gameBoard.showBoard(); 
+        gameBoard.showBoard();
         //switch turn after successful move
-        switchTurn(); 
+        switchTurn();
     }
     else {
         //human player turn
         cout << currentPlayer->getName() << ", it's your turn." << endl;
+
+        // Prompt for help or move
+        char choice;
+        cout << "Enter '1' for help or any other key to continue with your move: ";
+        cin >> choice;
+
+        if (choice == '1') {
+            // Generate and display possible moves
+            vector<MoveDetails> possibleMoves = generateAllPossibleMovesForPlayer(gameBoard, *currentPlayer);
+            displayPossibleMoves(possibleMoves);
+            cout << "Enter any key to continue with your move." << endl;
+            cin >> choice; // Pause before allowing the player to make their move
+        }
+
         char fromColLetter, toColLetter;
         int fromRow, toRow;
 
@@ -241,9 +254,9 @@ void Round::playerTurn() {
         if (rules.isValidMove(gameBoard, *currentPlayer, fromRow, fromCol, toRow, toCol) &&
             rules.isPathClear(gameBoard, fromRow, fromCol, toRow, toCol, currentPlayer->getPieceType(), capturePositions) &&
             rules.isValidEndingPosition(gameBoard, toRow, toCol, currentPlayer->getPieceType())) {
-            
+
             cout << "Passed validation checks!" << endl;
-            //log mmove and update board if move is successful
+            //log move and update board if move is successful
             if (gameBoard.movePiece(fromRow, fromCol, toRow, toCol, currentPlayer->getPieceType())) {
                 cout << "Move successful." << endl;
 
@@ -269,7 +282,7 @@ void Round::playerTurn() {
         }
         else {
             cout << "Invalid move. Please try again." << endl;
-            return; // Don't want to switch turns if invalid move
+            return; // Don't want to switch turns if the move is invalid
         }
 
         switchTurn(); // Next player's turn
@@ -293,6 +306,7 @@ void Round::playerTurn() {
         }
     }
 }
+
 /**
  * Function Name: logMove
  * Purpose: Records a move made by the current player.
@@ -703,6 +717,93 @@ void Round::continueRound() {
         //}
     }
 }
+vector<Round::MoveDetails> Round::generateAllPossibleMovesForPlayer(Board& board, const Player& player) {
+    vector<Round::MoveDetails> possibleMoves;
+
+    // Iterate over all board positions to find the player's pieces
+    for (int fromRow = 0; fromRow < 8; ++fromRow) {
+        for (int fromCol = 0; fromCol < 8; ++fromCol) {
+            // Check if the position contains one of the player's pieces
+            if (board.getPieceAt(fromRow, fromCol) == player.getPieceType()) {
+                // Generate all valid horizontal moves
+                int horizontalMovesRequired = Rules::countPiecesInLine(board, fromRow, fromCol, 'H');
+                for (int offset = 1; offset <= horizontalMovesRequired; ++offset) {
+                    // Adding moves when moving right
+                    addMoveIfValid(board, player, possibleMoves, fromRow, fromCol, fromRow, fromCol + offset);
+                    // Adding moves when moving left
+                    addMoveIfValid(board, player, possibleMoves, fromRow, fromCol, fromRow, fromCol - offset);
+                }
+
+                // Generate all valid vertical moves
+                int verticalMovesRequired = Rules::countPiecesInLine(board, fromRow, fromCol, 'V');
+                for (int offset = 1; offset <= verticalMovesRequired; ++offset) {
+                    // Adding moves when moving down
+                    addMoveIfValid(board, player, possibleMoves, fromRow, fromCol, fromRow + offset, fromCol);
+                    // Adding moves when moving up
+                    addMoveIfValid(board, player, possibleMoves, fromRow, fromCol, fromRow - offset, fromCol);
+                }
+
+                // Generate all valid diagonal moves (top-left to bottom-right and top-right to bottom-left)
+                int diagonalMoves1 = Rules::countDiagonalPieces(board, fromRow, fromCol, fromRow + 1, fromCol + 1);
+                for (int offset = 1; offset <= diagonalMoves1; ++offset) {
+                    addMoveIfValid(board, player, possibleMoves, fromRow, fromCol, fromRow + offset, fromCol + offset); // Down-right
+                    addMoveIfValid(board, player, possibleMoves, fromRow, fromCol, fromRow - offset, fromCol - offset); // Up-left
+                }
+
+                // Generate all valid diagonal moves (top-right to bottom-left and bottom-right to top-left)
+                int diagonalMoves2 = Rules::countDiagonalPieces(board, fromRow, fromCol, fromRow + 1, fromCol - 1);
+                for (int offset = 1; offset <= diagonalMoves2; ++offset) {
+                    addMoveIfValid(board, player, possibleMoves, fromRow, fromCol, fromRow + offset, fromCol - offset); // Down-left
+                    addMoveIfValid(board, player, possibleMoves, fromRow, fromCol, fromRow - offset, fromCol + offset); // Up-right
+                }
+            }
+        }
+    }
+
+    return possibleMoves;
+}
+
+void Round::addMoveIfValid(Board& board, const Player& player, vector<Round::MoveDetails>& possibleMoves, int startRow, int startCol, int endRow, int endCol) {
+    vector<pair<int, int>> capturePositions;
+    if (board.isPositionValid(endRow, endCol) &&
+        Rules::isValidMove(board, player, startRow, startCol, endRow, endCol) &&
+        Rules::isPathClear(board, startRow, startCol, endRow, endCol, player.getPieceType(), capturePositions) &&
+        Rules::isValidEndingPosition(board, endRow, endCol, player.getPieceType())) {
+
+        // Create a Round::MoveDetails object with starting position, ending position, and any capture positions
+        Round::MoveDetails move{ {startRow, startCol}, {endRow, endCol}, capturePositions };
+        possibleMoves.push_back(move);
+    }
+}
+void Round::displayPossibleMoves(const std::vector<MoveDetails>& possibleMoves) const {
+    if (possibleMoves.empty()) {
+        std::cout << "No possible moves available." << std::endl;
+        return;
+    }
+
+    std::cout << "Possible Moves:" << std::endl;
+    for (const auto& move : possibleMoves) {
+        // Convert the start and end positions to a more readable format (e.g., A1 to B2)
+        char startCol = static_cast<char>('A' + move.start.second);
+        int startRow = move.start.first + 1;
+        char endCol = static_cast<char>('A' + move.end.second);
+        int endRow = move.end.first + 1;
+
+        std::cout << startCol << startRow << " to " << endCol << endRow;
+
+        if (!move.captures.empty()) {
+            std::cout << " with captures at: ";
+            for (const auto& capture : move.captures) {
+                char captureCol = static_cast<char>('A' + capture.second);
+                int captureRow = capture.first + 1;
+                std::cout << captureCol << captureRow << " ";
+            }
+        }
+        std::cout << std::endl;
+    }
+}
+
+
 
 
 

@@ -13,6 +13,15 @@
 using namespace std;
 class Tournament;
 class Round {
+public:
+	struct MoveDetails {
+		std::pair<int, int> start;
+		std::pair<int, int> end;
+		std::vector<std::pair<int, int>> captures;
+
+		MoveDetails(std::pair<int, int> s, std::pair<int, int> e, std::vector<std::pair<int, int>> c)
+			: start(s), end(e), captures(c) {}
+	};
 private:
 	//pointers to the players
 	shared_ptr<Player> player1;
@@ -108,6 +117,14 @@ public:
 	void continueComputerTurn();
 	// Logic for the computer player to make its move, similar to the existing playerTurn logic.
 	// This might involve selecting from generated moves, etc.
+
+	vector<Round::MoveDetails> generateAllPossibleMovesForPlayer(Board& board, const Player& player);
+	void addMoveIfValid(Board& board, const Player& player, vector<Round::MoveDetails>& possibleMoves, int startRow, int startCol, int endRow, int endCol);
+	void displayPossibleMoves(const std::vector<MoveDetails>& possibleMoves) const;
+
+
+	
+
 
 };
 

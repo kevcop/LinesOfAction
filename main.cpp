@@ -72,7 +72,7 @@ int main() {
         string filename;
         switch (fileChoice) {
         case 1:
-            filename = "/Users/kchic/Desktop/linesofActionNew/Serial1.txt";
+            filename = "C:/Users/Owner/Downloads/serialization_case1.txt";
             break;
         case 2:
             filename = "/Users/kchic/Desktop/linesofActionNew/Serial2.txt"; 

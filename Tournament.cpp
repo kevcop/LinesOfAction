@@ -30,22 +30,33 @@ Tournament::Tournament(shared_ptr<Player> p1, shared_ptr<Player> p2)
  * Reference: None
  */
 void Tournament::playNextRound() {
-    //increment round number 
+    // Increment round number 
     currentRoundNumber++;
-    //indicate which round number is being played
     cout << "Starting round " << currentRoundNumber << endl;
-    //create a newe round with the players
-    Round round(player1, player2);
-    //start the round with a designated starting player
-    round.startGame(startingPlayer);
 
+    // Check if the rounds won are tied
+    if (player1->getRoundsWon() == player2->getRoundsWon()) {
+        cout << "Rounds are tied. Performing a coin toss to decide the starting player..." << endl;
+        Round round(player1, player2);
+        round.coinToss();  // Perform coin toss to decide starting player
+        startingPlayer = round.getCurrentPlayer();  // Set the starting player based on the coin toss
+    }
+    else {
+        // Otherwise, the winner of the last round starts
+        startingPlayer = (player1->getRoundsWon() > player2->getRoundsWon()) ? player1 : player2;
+    }
+
+    // Create and start a new round with the designated starting player
+    Round round(player1, player2);
+    round.startGame(startingPlayer);
 
     // Retrieve the winner from the round and display the outcome
     shared_ptr<Player> roundWinner = round.getRoundWinner();
 
-    // Update startingPlayer for the next round
-    startingPlayer = roundWinner; 
-    //output necessary messages indicating who won and score
+    // Update startingPlayer for the next round based on who won this round
+    startingPlayer = roundWinner;
+
+    // Output necessary messages indicating who won and the score
     if (roundWinner == player1) {
         scores[0] = round.getPlayer1Score();
         cout << player1->getName() << " wins the round with "
@@ -59,14 +70,16 @@ void Tournament::playNextRound() {
     else {
         cout << "The round ends in a draw." << endl;
     }
-    //display scores at the end of a row
+
+    // Display scores at the end of the round
     displayScores();
-    //ask  if users would like to play another round
+
+    // Ask if users would like to play another round
     if (askToContinue()) {
         playNextRound();
     }
-    //if no desire to play another round, determine an overall winner of the tournament
     else {
+        // If no desire to play another round, determine the overall winner of the tournament
         declareWinner();
     }
 }
